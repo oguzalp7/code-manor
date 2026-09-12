@@ -12,7 +12,7 @@
 
 2. **The Steward (`/steward` — Grand Conductor):**
    - Single human touchpoint across all projects.
-   - Maintains the fleet registry (`C:\Users\oguz_\.gemini\antigravity\projects.json`).
+   - Maintains the fleet registry (`~/.gemini/antigravity/projects.json`).
    - Insulates human conversation from raw terminal noise, diffs, and context rot.
    - Translates cross-repo requirements into project-specific charters and commands project Butlers.
 
@@ -42,11 +42,11 @@
 
 3. **CONTEXT HYGIENE & CONTEXT POINTERS (Handoff + Conversation ID):**
    - Do NOT dump 50,000 tokens of raw conversation history between agents.
-   - Work is passed via structured specs and handoff notes, paired with an exact Antigravity conversation pointer: `conversation://<conversation-id>`.
+   - Work is passed via structured specs and handoff notes, paired with an exact conversation pointer: `conversation://<conversation-id>`.
    - If an agent encounters ambiguity, it uses targeted `grep` on that specific conversation's `transcript.jsonl` rather than bloating the active window.
 
 4. **DETERMINISTIC VERIFICATION GATES:**
    - Before marking a task `done` in `tasks-axi`:
      1. Local test suite passes cleanly.
-     2. Outer gate exits 0: `wsl -d Ubuntu-24.04 -u oguz /home/oguz/.no-mistakes/bin/no-mistakes axi run --skip ci`.
+     2. Outer gate exits 0: `no-mistakes axi run --skip ci` (or `wsl no-mistakes axi run --skip ci` on Windows if hosted in WSL).
      3. Butler independently reviews the diff against `$BASE_SHA` via `/code-review`.

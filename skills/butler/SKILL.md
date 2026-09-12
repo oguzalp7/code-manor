@@ -18,7 +18,7 @@ Butler can be invoked directly by the user when working inside a project workspa
    - **Maid (Worker):** Once tracer-bullet tickets are drafted, Butler delegates isolated vertical slices to lean subagents (`invoke_subagent` with `Role: "maid"`, `Model: "flash"`) running `/implement` test-first (`/tdd`).
    - **Review & Spec Integrity:** Maid workers are strictly forbidden from evaluating their own spec compliance. Butler independently executes `/code-review` (Spec + Standards against `$BASE_SHA`) before accepting any ticket.
 2. **Deterministic Task State via `tasks-axi`:**
-   - When `/to-tickets` produces vertical slices, Butler registers them into `tasks-axi` (`wsl -d Ubuntu-24.04 -u oguz tasks-axi add <id> "<title>" --body "..."`).
+   - When `/to-tickets` produces vertical slices, Butler registers them into `tasks-axi` (`tasks-axi add <id> "<title>" --body "..."`).
    - Query unblocked frontier work deterministically with `tasks-axi ready`.
    - Never let agents invent loose, ephemeral `TODO.md` files.
 3. **Closed-Loop Continuous Memory (`.memory/`):**
@@ -26,8 +26,13 @@ Butler can be invoked directly by the user when working inside a project workspa
    - **Session End / Feedback Loop:** Whenever a ticket finishes or user provides a correction, Butler automatically records the finding in `.memory/LESSONS.md` and updates `tasks-axi done <id>`.
 4. **Context Pointers & Zero-Bloat Handshakes:**
    - When receiving instructions from `/steward` or delegating to `maid`, never transfer tens of thousands of tokens of chat history.
-   - Reference the spec and the exact Antigravity conversation pointer: `conversation://<conversation-id>`.
+   - Reference the spec and the exact conversation pointer: `conversation://<conversation-id>`.
    - If ambiguity arises, inspect the target conversation's `transcript.jsonl` with targeted `grep` rather than dumping the full transcript.
+
+> [!TIP]
+> **Cross-Platform Execution:**
+> - **Linux & macOS (Native):** Run commands directly (`tasks-axi`, `no-mistakes`, `gh-axi`).
+> - **Windows (WSL Bridge):** If tools are installed in WSL, run via `wsl <command>` (e.g. `wsl tasks-axi ready`, `wsl no-mistakes axi run --skip ci`).
 
 ---
 
@@ -53,7 +58,7 @@ Butler NEVER drops the ball after delegating. Delegating to a `maid` subagent is
 2. Confirm the working branch / worktree state.
 3. Record the exact baseline commit SHA:
    ```bash
-   BASE_SHA=$(wsl -d Ubuntu-24.04 -u oguz git rev-parse HEAD)
+   BASE_SHA=$(git rev-parse HEAD)
    ```
 
 ### Step 2: Maid Worker Delegation (Context-Isolated)
@@ -62,7 +67,7 @@ Spawn a lean worker subagent (`invoke_subagent` with `Role: "maid"`, `Model: "fl
 - **Strict Boundary:** The maid is strictly an implementer:
   1. Test-driven development (`/tdd`) at pre-agreed seams.
   2. Achieving green tests without modifying existing tests (Guardrail #1).
-  3. Verifying the outer gate: `wsl -d Ubuntu-24.04 -u oguz /home/oguz/.no-mistakes/bin/no-mistakes axi run --skip ci`.
+  3. Verifying the outer gate: `no-mistakes axi run --skip ci`.
 - **Worker Prohibition:** The maid subagent is **NEVER** asked to evaluate its own spec compliance or perform code review.
 
 ### Step 3: Supervised Execution & Outer Gate Confirmation
@@ -85,11 +90,11 @@ Butler reviews the diff along the two canonical axes:
 - **Spec Drift / Scope Creep:** Butler instructs the maid subagent to adjust implementation until `no-mistakes` passes cleanly.
 
 ### Step 6: Deterministic Sync & PR Emission
-1. **Close Ticket:** `wsl -d Ubuntu-24.04 -u oguz tasks-axi done <task-id>`
+1. **Close Ticket:** `tasks-axi done <task-id>`
 2. **Capture Lesson:** Append any edge case, tricky pattern, or user preference to `.memory/LESSONS.md`.
 3. **Emit PR:** When a slice is complete:
    ```bash
-   wsl -d Ubuntu-24.04 -u oguz gh-axi pr create \
+   gh-axi pr create \
      --title "<type>(<scope>): <title> (#<task-id>)" \
      --body "## Summary\nImplemented vertical slice for task <task-id>.\n\n## Verification\n- no-mistakes: PASSED\n- /code-review (Spec + Standards): PASSED against $BASE_SHA"
    ```

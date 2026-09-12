@@ -1,19 +1,25 @@
 ﻿# 🏰 Code-Manor
 
 <p align="center">
-  <strong>The Antigravity-Native Multi-Project Orchestration Distro</strong><br>
-  <em>Blending Matt Pocock's Cognitive Domain Craft with Kun Chen's Principal AXI Systems & Deterministic Gates</em>
+  <strong>The Universal Multi-Project Agentic Orchestration Distro</strong><br>
+  <em>Unifying Matt Pocock's Cognitive Domain Craft with Kun Chen's Principal AXI Systems Engineering & Deterministic Gates</em>
+</p>
+
+<p align="center">
+  <img alt="Platform" src="https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows%20(WSL)-blue?style=flat-square" />
+  <img alt="Harness" src="https://img.shields.io/badge/Harness-Antigravity%20%7C%20Claude%20Code%20%7C%20Codex%20%7C%20Grok-purple?style=flat-square" />
+  <img alt="License" src="https://img.shields.io/badge/License-MIT-green?style=flat-square" />
 </p>
 
 ---
 
 ## 🎩 What is Code-Manor?
 
-Most AI coding setups suffer from two failure modes:
+Most AI coding setups suffer from two crippling failure modes:
 1. **The Vibe Coding Trap:** Letting agents write code unguided, leading to hallucinations, broken tests, and context rot.
-2. **The Tab-Juggling Bottleneck:** Trying to juggle 3-4 repositories, copy-pasting diffs, and drowning in terminal noise.
+2. **The Tab-Juggling Bottleneck:** Trying to juggle multiple repositories, copy-pasting diffs, and drowning in terminal noise.
 
-**Code-Manor** solves this by establishing a disciplined, British household estate hierarchy (**Steward $\rightarrow$ Butler $\rightarrow$ Maid**), engineered specifically for **Google Antigravity** and **Gemini Flash (High Reasoning / Lean Workers)**:
+**Code-Manor** solves this by establishing a disciplined, British household estate hierarchy (**Steward $\rightarrow$ Butler $\rightarrow$ Maid**), designed for high-leverage agentic software development:
 
 ```
                       👑 HUMAN (Master of the Estate)
@@ -41,6 +47,53 @@ Most AI coding setups suffer from two failure modes:
 
 ---
 
+## 💻 Cross-Platform & Dependency Guide
+
+Code-Manor is engineered to run seamlessly across **macOS, Linux, and Windows**:
+
+### 1. macOS & Native Linux
+On macOS and Linux, all tools run natively in your default terminal:
+- **Prerequisites:** `git`, `gh` (authenticated via `gh auth login`), Node.js (>= 20).
+- **Core AXI Tools:**
+  ```bash
+  # Install tasks-axi and AXI CLI tools
+  npm install -g tasks-axi lavish-axi gh-axi chrome-devtools-axi
+  
+  # Install no-mistakes gatekeeper
+  curl -fsSL https://kunchenguid.github.io/no-mistakes/install.sh | bash
+  ```
+- **Execution:** All commands (`tasks-axi ready`, `no-mistakes axi run`, etc.) execute directly.
+
+---
+
+### 2. Windows + WSL2 (Windows Subsystem for Linux)
+For Windows users, Code-Manor provides a seamless bridge between Windows IDEs/Agents (like Google Antigravity) and Linux-native CLI tools:
+- **Prerequisites:** WSL2 (Ubuntu 22.04/24.04 recommended), Git, Node.js.
+- **Tool Location:** Install `tasks-axi` and `no-mistakes` inside your WSL2 environment.
+- **Bridge Mechanics:**
+  - When running from a Windows host agent, commands are bridged transparently via `wsl <command>`:
+    ```powershell
+    wsl tasks-axi ready
+    wsl no-mistakes axi run --skip ci
+    ```
+  - Paths are automatically translated between Windows (`C:\Users\...`) and WSL (`/mnt/c/Users/...`).
+  - `/setup-code-manor` automatically detects Windows + WSL and configures the `projects.json` fleet registry with both path formats.
+
+---
+
+## 🤖 Harness Compatibility
+
+Code-Manor is **harness-agnostic** and operates cleanly across all major agent environments:
+
+| Harness | Primary Support Mode | Notes |
+| :--- | :--- | :--- |
+| **Google Antigravity** | Native Plugin | Auto-discovered from `~/.gemini/config/plugins/code-manor`. Native support for `Workspace: "branch"` and `projects.json`. |
+| **Claude Code** | Official Plugin / Skills | Install via `npx skills@latest add oguzalp7/code-manor` or copy to `.claude/skills`. |
+| **OpenAI Codex** | Native Agent YAML | Bundled `agents/openai.yaml` files provide model-invocation policies. |
+| **Grok / Pi / Cursor** | Agent Distro | Compatible with standard subagent and terminal invocation flows. |
+
+---
+
 ## ⚡ Quick Start
 
 ### 1. Installation
@@ -52,41 +105,44 @@ npx skills@latest add oguzalp7/code-manor
 
 Or clone directly into your Antigravity plugins directory:
 ```bash
-cd ~/.gemini/config/plugins/
-git clone https://github.com/oguzalp7/code-manor.git
+# macOS / Linux:
+git clone https://github.com/oguzalp7/code-manor.git ~/.gemini/config/plugins/code-manor
+
+# Windows (PowerShell):
+git clone https://github.com/oguzalp7/code-manor.git "$env:USERPROFILE\.gemini\config\plugins\code-manor"
 ```
 
 ### 2. Run Setup Wizard
 
-In Antigravity chat, run:
+In your agent chat, run:
 ```
 /setup-code-manor
 ```
 This will:
-- Auto-discover projects from Antigravity 2.0 desktop (`workspaceStorage`).
+- Auto-discover registered projects from your IDE / desktop workspace storage.
 - Populate `~/.gemini/antigravity/projects.json` for instant, zero-token project lookups.
-- Verify WSL2 Ubuntu toolchains (`tasks-axi`, `no-mistakes`, `git`, `gh`).
+- Verify environment toolchains (`tasks-axi`, `no-mistakes`, `git`, `gh`).
 
 ### 3. Talk to Your Estate
 
-- **Across Projects:** Talk to `/steward` from any central conversation:
-  - *"What did we ship recently on Project PulseFlow?"*
-  - *"Prepare a feature charter connecting API Service to Mobile App."*
-- **Inside a Project:** Talk to `/butler` directly from a project workspace:
+- **Across Projects:** Talk to `/steward` from any central or global conversation:
+  - *"What did we build recently on Project PulseFlow?"*
+  - *"Create a task graph connecting our API service to the mobile frontend."*
+- **Inside a Specific Project:** Talk to `/butler` directly from a project workspace:
   - *"Grab the next unblocked ticket from tasks-axi ready and dispatch a maid to implement it."*
 
 ---
 
-## 🛡️ Core Guardrails
+## 🛡️ Non-Negotiable Guardrails
 
 1. **Zero-Tolerance Test Tampering:** Modifying existing test assertion lines in `tests/` or removing tests to force green is strictly prohibited. Green tests must be achieved exclusively by fixing implementation files in `src/`.
 2. **Single Source of Truth (SSOT):** Task backlog lives exclusively in `tasks-axi` (`.tasks.toml` / `backlog.md`). Architectural memory lives in `.memory/`. Loose `TODO.md` files are banned.
-3. **Context Pointers:** Conversations communicate through structured specs paired with Antigravity pointers (`conversation://<id>`). If an agent hits ambiguity, it uses targeted `grep` on `transcript.jsonl` rather than bloating the context window with raw history.
+3. **Context Pointers:** Conversations communicate through structured specs paired with conversation pointers (`conversation://<id>`). If an agent hits ambiguity, it uses targeted `grep` on `transcript.jsonl` rather than bloating the context window with raw history.
 4. **Deterministic Outer Gate:** Every ticket must exit with code 0 from `no-mistakes axi run --skip ci` before Butler accepts it.
 
 ---
 
-## 📦 What's Included
+## 📦 What's Included (44 Skills)
 
 - **Core Orchestrators:** `/steward`, `/butler`, `/setup-code-manor`.
 - **Upstream Matt Pocock Skills (v1.2.3):** `/ask-matt`, `/to-spec`, `/to-tickets`, `/implement`, `/implement-spec`, `/retro`, `/tdd`, `/code-review`, `/diagnosing-bugs` (secret redacted), `/codebase-design`, `/improve-codebase-architecture`, `/wayfinder`, `/prototype`, `/wizard`, `/grill-with-docs`, `/grill-me`, `/grilling`, `/wait-what`, `/to-questionnaire`.
