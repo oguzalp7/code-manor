@@ -13,6 +13,8 @@
 
 ---
 
+![hero](./assets/images/hero.png)
+
 ## 🎩 What is Code-Manor?
 
 Most AI coding setups suffer from two crippling failure modes:
