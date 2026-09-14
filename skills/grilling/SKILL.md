@@ -26,3 +26,13 @@ Each round the user answers reshapes the tree: settled decisions push the fronti
 Finding _facts_ is your job, never the user's. When a frontier question needs a fact from the environment (filesystem, tools, etc.), dispatch a sub-agent to find it; don't ask the user for anything you could look up yourself. Don't block on it: a running exploration is an unsettled prerequisite, so only the questions downstream of it wait for the sub-agent to report; ask the rest of the frontier now. The _decisions_ are the user's: put each to them and wait.
 
 The session is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Do not act on it until the user confirms you have reached a shared understanding.
+
+---
+
+### 🧭 Cognitive Persistence via `frontier-axi`
+
+In an AXI/Code-Manor workspace, persist open questions and decisions using `frontier-axi` to protect them against context compaction (`/compact`):
+- **Stage topic:** `frontier-axi add <id> "<title>"`
+- **Log questions:** `frontier-axi question add <id> "<question>"`
+- **Resolve with answer:** `frontier-axi question resolve <id> <index> --answer "<answer>"`
+- **Graduate:** Settle the frontier before writing `/to-spec`, or run `frontier-axi promote <id>` for atomic spikes.

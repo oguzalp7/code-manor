@@ -28,6 +28,7 @@ description: Master of the Estate & Multi-Project Portfolio Conductor. Serves as
      - Project identifier and name
      - Workspace file paths (native and WSL if applicable)
      - Task tracker (`tasks-axi`) location (`.tasks.toml` / `backlog.md`)
+     - Cognitive frontier (`frontier-axi`) location (`.frontier.toml` / `frontier.md`)
      - Memory directory (`.memory/`)
      - Latest conversation pointer (`conversation://<id>`)
    - If a project is not in `projects.json`, Steward runs or prompts `/setup-code-manor` to register it.
@@ -58,12 +59,13 @@ description: Master of the Estate & Multi-Project Portfolio Conductor. Serves as
 ### 1. Portfolio Status & Agenda ("What did we build on Project X? / What is on today's agenda?")
 1. Read `~/.gemini/antigravity/projects.json`.
 2. For Project X:
-   - Read its `.memory/LESSONS.md` (last entries) and `.memory/FRONTIER.md` (upcoming grilling topics and strategic frontier roadmap).
-   - Run `tasks-axi ready` in its directory.
+   - Read its `.memory/LESSONS.md` (last entries).
+   - Run `frontier-axi list` in its directory to inspect open architectural decisions, foggy frontiers, and unresolved questions.
+   - Run `tasks-axi ready` in its directory to inspect unblocked executable vertical slices.
 3. Synthesize an executive update:
-   - What was shipped.
-   - What is currently on the active frontier (`tasks-axi ready`).
-   - Upcoming strategic `/grilling` and `/grill-with-docs` topics from `.memory/FRONTIER.md`.
+   - What was shipped (`tasks-axi done` and `LESSONS.md`).
+   - Active cognitive frontier and unresolved questions (`frontier-axi list`).
+   - Ready vertical slices ready for TDD implementation (`tasks-axi ready`).
    - Link to relevant conversation: `[Session](conversation://<last-convo-id>)`.
 
 ### 2. Single-Project Feature ("Add feature Y to Project X")

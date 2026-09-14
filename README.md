@@ -1,4 +1,4 @@
-﻿# 🏰 Code-Manor
+# 🏰 Code-Manor
 
 <p align="center">
   <strong>The Universal Multi-Project Agentic Orchestration Distro</strong><br>
@@ -35,7 +35,8 @@ Most AI coding setups suffer from two crippling failure modes:
              ┌──────────────────────┴──────────────────────┐
              ▼                                             ▼
    🎩 /butler (Project A)                        🎩 /butler (Project B)
-      • tasks-axi DAG                               • tasks-axi DAG
+      • frontier-axi (Cognitive Bridge)             • frontier-axi (Cognitive Bridge)
+      • tasks-axi DAG (Execution)                   • tasks-axi DAG (Execution)
       • .memory/ Architecture                       • .memory/ Architecture
       • /to-tickets Decomposition                   • /to-tickets Decomposition
       • Two-Axis Code Review                        • Two-Axis Code Review
@@ -58,23 +59,27 @@ On macOS and Linux, all tools run natively in your default terminal:
 - **Prerequisites:** `git`, `gh` (authenticated via `gh auth login`), Node.js (>= 20).
 - **Core AXI Tools:**
   ```bash
-  # Install tasks-axi and AXI CLI tools
-  npm install -g tasks-axi lavish-axi gh-axi chrome-devtools-axi
+  # Install tasks-axi, frontier-axi, and AXI CLI tools
+  npm install -g tasks-axi frontier-axi lavish-axi gh-axi chrome-devtools-axi
   
   # Install no-mistakes gatekeeper
   curl -fsSL https://kunchenguid.github.io/no-mistakes/install.sh | bash
   ```
-- **Execution:** All commands (`tasks-axi ready`, `no-mistakes axi run`, etc.) execute directly.
+- **Execution:** All commands (`frontier-axi list`, `tasks-axi ready`, `no-mistakes axi run`, etc.) execute directly.
 
 ---
 
 ### 2. Windows + WSL2 (Windows Subsystem for Linux)
 For Windows users, Code-Manor provides a seamless bridge between Windows IDEs/Agents (like Google Antigravity) and Linux-native CLI tools:
 - **Prerequisites:** WSL2 (Ubuntu 22.04/24.04 recommended), Git, Node.js.
-- **Tool Location:** Install `tasks-axi` and `no-mistakes` inside your WSL2 environment.
+- **Tool Location:** Install `frontier-axi`, `tasks-axi`, and `no-mistakes` inside your WSL2 environment:
+  ```bash
+  npm install -g tasks-axi frontier-axi || npm install -g https://github.com/oguzalp7/frontier-axi.git
+  ```
 - **Bridge Mechanics:**
   - When running from a Windows host agent, commands are bridged transparently via `wsl <command>`:
     ```powershell
+    wsl frontier-axi list
     wsl tasks-axi ready
     wsl no-mistakes axi run --skip ci
     ```
@@ -138,17 +143,20 @@ This will:
 ## 🛡️ Non-Negotiable Guardrails
 
 1. **Zero-Tolerance Test Tampering:** Modifying existing test assertion lines in `tests/` or removing tests to force green is strictly prohibited. Green tests must be achieved exclusively by fixing implementation files in `src/`.
-2. **Single Source of Truth (SSOT):** Task backlog lives exclusively in `tasks-axi` (`.tasks.toml` / `backlog.md`). Architectural memory lives in `.memory/`. Loose `TODO.md` files are banned.
+2. **Single Source of Truth (SSOT) Duality:** 
+   - **Upstream Cognitive Frontier:** Nascent ideas, horizontal architectural seams, and foggy decisions live exclusively in `frontier-axi` (`.frontier.toml` / `frontier.md`). Prematurely dumping vague tickets directly into `tasks-axi` is strictly forbidden.
+   - **Bridge to Slices:** Settle open questions via `/grilling` $\rightarrow$ formalize seams via `/to-spec` $\rightarrow$ slice into tracer bullets via `/to-tickets` $\rightarrow$ register in `tasks-axi` (or run `frontier-axi promote <id>` for isolated atomic spikes).
+   - **Downstream Execution Backlog:** Verifiable vertical slices live in `tasks-axi` (`.tasks.toml` / `backlog.md`). Architectural memory lives in `.memory/`. Loose `TODO.md` files are banned.
 3. **Context Pointers:** Conversations communicate through structured specs paired with conversation pointers (`conversation://<id>`). If an agent hits ambiguity, it uses targeted `grep` on `transcript.jsonl` rather than bloating the context window with raw history.
 4. **Deterministic Outer Gate:** Every ticket must exit with code 0 from `no-mistakes axi run --skip ci` before Butler accepts it.
 
 ---
 
-## 📦 What's Included (44 Skills)
+## 📦 What's Included (45 Skills)
 
-- **Core Orchestrators:** `/steward`, `/butler`, `/setup-code-manor`.
+- **Core Orchestrators & Pre-Flight Bridges:** `/steward`, `/butler`, `/frontier-axi`, `/setup-code-manor`.
 - **Upstream Matt Pocock Skills (v1.2.3):** `/ask-matt`, `/to-spec`, `/to-tickets`, `/implement`, `/implement-spec`, `/retro`, `/tdd`, `/code-review`, `/diagnosing-bugs` (secret redacted), `/codebase-design`, `/improve-codebase-architecture`, `/wayfinder`, `/prototype`, `/wizard`, `/grill-with-docs`, `/grill-me`, `/grilling`, `/wait-what`, `/to-questionnaire`.
-- **Kun Chen AXI & Verification Tools:** `frontend-axi-tdd` (zero-vision token UI testing), `/kun` (living L8 Principal knowledge base).
+- **Kun Chen AXI & Verification Tools:** `frontier-axi` (pre-flight cognitive bridge), `frontend-axi-tdd` (zero-vision token UI testing), `/kun` (living L8 Principal knowledge base).
 - **UI/UX Excellence:** `ui-ux-pro-max`, `frontend-design`.
 
 ---

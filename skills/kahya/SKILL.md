@@ -15,10 +15,11 @@ description: Master Dispatcher & Flow Conductor based on the ask-matt taxonomy. 
    - **Kahya (Conductor):** Runs with high reasoning effort (`Gemini Thinking / High`). Owns strategic grilling, architectural specs, ticket decomposition, and QA synthesis.
    - **Delegated Execution:** Once tracer-bullet tickets are drafted, Kahya can delegate isolated vertical slices to lean subagents (`invoke_subagent` with `Model: "flash"`) running `/implement` test-first (`/tdd`).
    - **Review & Spec Integrity:** Lean workers are strictly forbidden from evaluating their own spec compliance. Kahya independently executes `/code-review` (Spec + Standards against `$BASE_SHA`) before accepting any ticket.
-2. **Deterministic Task State via `tasks-axi`:**
-   - When `/to-tickets` produces vertical slices, Kahya registers them into `tasks-axi` (`wsl -d Ubuntu-24.04 -u oguz tasks-axi add <id> "<title>" --body "..."`).
-   - Query unblocked frontier work deterministically with `tasks-axi ready`.
-   - Never let agents invent loose, ephemeral `TODO.md` files.
+2. **Cognitive Frontier & Deterministic Task State (`frontier-axi` + `tasks-axi`):**
+   - For ambiguous ideas or foggy architectural seams, Kahya stages them in `frontier-axi` (`wsl -d Ubuntu-24.04 -u oguz frontier-axi add <id> "<title>"`).
+   - Once questions are resolved via `/grilling`, Kahya drafts `/to-spec`, breaks into tracer bullets via `/to-tickets`, and registers them into `tasks-axi` (`wsl -d Ubuntu-24.04 -u oguz tasks-axi add <id> "<title>" --body "..."`).
+   - Query unblocked execution work deterministically with `tasks-axi ready`.
+   - Never let agents invent loose, ephemeral `TODO.md` files or dump vague tickets directly into `tasks-axi`.
 3. **Closed-Loop Continuous Memory (`.memory/`):**
    - **Session Start:** Read `.memory/` (`ARCHITECTURE.md`, `PATTERNS.md`, `LESSONS.md`) to inherit learned knowledge.
    - **Session End / Feedback Loop:** Whenever a ticket finishes or user provides a correction, Kahya automatically records the finding in `.memory/LESSONS.md` and updates `tasks-axi done <id>`.
@@ -32,11 +33,12 @@ description: Master Dispatcher & Flow Conductor based on the ask-matt taxonomy. 
 
 | Situation / Intent | Recommended Flow | Execution Mode |
 | :--- | :--- | :--- |
-| **New Feature / Idea** | `/grill-with-docs` $\rightarrow$ `/to-spec` $\rightarrow$ `/to-tickets` $\rightarrow$ `tasks-axi` $\rightarrow$ `/implement` | Conductor (High) $\rightarrow$ Flash Subagent (Act) |
+| **New Feature / Idea (Foggy)** | `frontier-axi` $\rightarrow$ `/grill-with-docs` $\rightarrow$ `/to-spec` $\rightarrow$ `/to-tickets` $\rightarrow$ `tasks-axi` $\rightarrow$ `/implement` | Conductor (High) $\rightarrow$ Flash Subagent (Act) |
+| **Atomic Seam / Spike** | `frontier-axi` $\rightarrow$ `/grilling` $\rightarrow$ `frontier-axi promote` $\rightarrow$ `tasks-axi` $\rightarrow$ `/implement` | Conductor $\rightarrow$ Flash |
 | **UI / Frontend Feature or Bug** | `frontend-axi-tdd` $\rightarrow$ `/tdd` | Web/UI only (Zero-vision Accessibility & Console gate) |
 | **UI / Frontend Polish (Design)**| `frontend-design` $\rightarrow$ `ui-ux-pro-max` | In-Context (Tokens & A11y) |
 | **Code Review / PR Audit** | `/code-review` (Standards + Spec) | Conductor Review & Memory Sync |
-| **Huge / Foggy Project** | `/wayfinder` $\rightarrow$ `/to-spec` | Strategic Architecture First |
+| **Huge / Foggy Project** | `/wayfinder` $\rightarrow$ `frontier-axi` $\rightarrow$ `/to-spec` | Strategic Architecture First |
 | **Embedded / CV / Non-Web Domains** | Domain specific TDD (`pytest` / native tests) | Do NOT invoke browser tools / devtools |
 
 ---
@@ -72,13 +74,14 @@ Spawn a lean worker subagent (`invoke_subagent` with `Model: "flash"`):
 - **Strict Boundary:** The worker is strictly an implementer. Its sole job is:
   1. Test-driven development (`/tdd`) at pre-agreed seams.
   2. Achieving green tests without modifying existing tests (Guardrail #1).
-  3. Verifying the outer gate: `wsl -d Ubuntu-24.04 -u oguz /home/oguz/.no-mistakes/bin/no-mistakes axi run --skip ci` (runs local tests, types, lint, pushes commits and updates PR, skipping only broken remote CI).
+  3. **Tier 1 Mandatory Local Gate:** Running `make check` (or project test/lint suite) and confirming `exit 0`.
+  4. Verifying the outer gate: `wsl -d Ubuntu-24.04 -u oguz /home/oguz/.no-mistakes/bin/no-mistakes axi run --skip ci` (runs local tests, types, lint, pushes commits and updates PR, skipping only broken remote CI).
 - **Worker Prohibition:** The worker subagent is **NEVER** asked to evaluate its own spec compliance or perform code review.
 
 ### Step 3: Supervised Execution & Outer Gate Confirmation
 - Kahya maintains active supervision over the invoked worker.
-- The worker must report a clean run of `no-mistakes axi run --skip ci` (exit code 0).
-- If `no-mistakes` fails or tests break, Kahya keeps the worker focused on fixing the implementation in-context until exit code 0 is attained.
+- The worker must report a clean run of both `make check` (exit code 0) and `no-mistakes axi run --skip ci` (exit code 0).
+- If `make check` or `no-mistakes` fails or tests break, Kahya keeps the worker focused on fixing the implementation in-context until exit code 0 is attained.
 
 ### Step 4: High-Reasoning Two-Axis `/code-review` Gate
 Once `no-mistakes` passes, **Kahya (High Reasoning Conductor) executes the original `/code-review` skill flow**:
@@ -98,8 +101,8 @@ Kahya reviews the diff along the two canonical axes:
 ### Step 5: Resolution & Fast-Path Healing
 Based on the `/code-review` findings:
 - **Clean Pass:** Proceed directly to Step 6.
-- **Minor Nits (Fast-Path):** Kahya (Conductor) fixes trivial typos, naming, or minor formatting directly in-context, runs `no-mistakes axi run` to verify, and commits. No subagent or ticket re-spawn needed.
-- **Spec Drift / Scope Creep:** Kahya sends a targeted corrective message to the worker subagent: *"Spec violation in [file]: remove X, adapt return type to Zod schema Y."* The worker amends the diff and passes `no-mistakes`.
+- **Minor Nits (Fast-Path):** Kahya (Conductor) fixes trivial typos, naming, or minor formatting directly in-context, runs `make check` and `no-mistakes axi run --skip ci` to verify, and commits. No subagent or ticket re-spawn needed.
+- **Spec Drift / Scope Creep:** Kahya sends a targeted corrective message to the worker subagent: *"Spec violation in [file]: remove X, adapt return type to Zod schema Y."* The worker amends the diff, ensures `make check` passes, and passes `no-mistakes`.
 
 ### Step 6: Deterministic Sync & PR Emission
 Once the review passes cleanly:
@@ -113,6 +116,6 @@ Once the review passes cleanly:
    ```bash
    wsl -d Ubuntu-24.04 -u oguz gh-axi pr create \
      --title "<type>(<scope>): <title> (#<task-id>)" \
-     --body "## Summary\nImplemented vertical slice for task <task-id>.\n\n## Verification\n- no-mistakes: PASSED\n- /code-review (Spec + Standards): PASSED against $BASE_SHA"
+     --body "## Summary\nImplemented vertical slice for task <task-id>.\n\n## Verification\n- make check (Local Lint/Types/Tests): PASSED\n- no-mistakes: PASSED\n- /code-review (Spec + Standards): PASSED against $BASE_SHA"
    ```
 4. **Advance Frontier:** Query `tasks-axi ready` and immediately advance to the next ticket.

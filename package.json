@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "code-manor",
   "version": "1.0.0",
   "description": "Code-Manor: Antigravity-native multi-project orchestration distro (Steward -> Butler -> Maid). Blends Matt Pocock's domain modeling and craft with Kun Chen's AXI systems engineering and deterministic gates.",
@@ -12,6 +12,9 @@
     "orchestrator",
     "tdd",
     "axi",
+    "tasks-axi",
+    "frontier-axi",
+    "cognitive-bridge",
     "matt-pocock",
     "kun-chen"
   ]
