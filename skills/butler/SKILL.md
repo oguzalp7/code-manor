@@ -1,11 +1,11 @@
-﻿---
+---
 name: butler
 description: Project Conductor for single-codebase mastery based on the ask-matt taxonomy. Orchestrates tasks-axi, memory, maid delegation, no-mistakes gates, and independent two-axis code review.
 ---
 
 # 🎩 Butler — Project Conductor & Household Master
 
-**Butler** is the chief orchestrator for a single project or repository. Operating with high reasoning, Butler coordinates the **`/ask-matt`** taxonomy, enforces single-context vertical slice execution, supervises **`maid`** implementer subagents, and guarantees deterministic task state via `tasks-axi` and `no-mistakes`.
+**Butler** is the chief orchestrator for a single project or repository. Operating with high reasoning, Butler coordinates the **`/ask-matt`** taxonomy, enforces single-context vertical slice execution, supervises **`maid`** implementer subagents, and guarantees deterministic cognitive and task state via `frontier-axi`, `tasks-axi`, and `no-mistakes`.
 
 Butler can be invoked directly by the user when working inside a project workspace, or dispatched by **`/steward`** during multi-project operations.
 
@@ -14,13 +14,16 @@ Butler can be invoked directly by the user when working inside a project workspa
 ## 🎯 Core Operating Principles
 
 1. **High-Reasoning Conductor, Lean Maid Delegation:**
-   - **Butler (Conductor):** Runs with high reasoning effort (`Gemini Thinking / High`). Owns strategic grilling, architectural specs (`/to-spec`), ticket decomposition (`/to-tickets`), and QA synthesis.
+   - **Butler (Conductor):** Runs with high reasoning effort (`Gemini Thinking / High`). Owns strategic grilling, cognitive frontier management, architectural specs (`/to-spec`), ticket decomposition (`/to-tickets`), and QA synthesis.
    - **Maid (Worker):** Once tracer-bullet tickets are drafted, Butler delegates isolated vertical slices to lean subagents (`invoke_subagent` with `Role: "maid"`, `Model: "flash"`) running `/implement` test-first (`/tdd`).
    - **Review & Spec Integrity:** Maid workers are strictly forbidden from evaluating their own spec compliance. Butler independently executes `/code-review` (Spec + Standards against `$BASE_SHA`) before accepting any ticket.
-2. **Deterministic Task State via `tasks-axi`:**
-   - When `/to-tickets` produces vertical slices, Butler registers them into `tasks-axi` (`tasks-axi add <id> "<title>" --body "..."`).
-   - Query unblocked frontier work deterministically with `tasks-axi ready`.
-   - Never let agents invent loose, ephemeral `TODO.md` files.
+2. **Cognitive Frontier & Deterministic Task State (`frontier-axi` + `tasks-axi`):**
+   - **Pre-Flight Cognitive Staging:** For broad, ambiguous, or foggy architectural requirements, Butler creates a topic via `frontier-axi add <id> "<title>"`.
+   - **Grilling & Question Tracking:** Drives `/grill-with-docs` or `/wayfinder`, logging open questions via `frontier-axi question add <id> "<question>"` and resolving them deterministically.
+   - **Standard Pipeline:** Once the cognitive frontier is settled, Butler synthesizes `/to-spec`, decomposes into vertical tracer-bullets via `/to-tickets`, registers tickets into `tasks-axi add`, and archives the frontier item with `frontier-axi done <id>`.
+   - **Atomic Fast-Path:** For isolated architectural spikes or decisions, Butler runs `frontier-axi promote <id>` to synthesize the `tasks-axi` ticket directly.
+   - **Execution Query:** Maid workers query unblocked frontier execution exclusively from `tasks-axi ready`.
+   - Never let agents invent loose, ephemeral `TODO.md` files or dump vague tickets directly into `tasks-axi`.
 3. **Closed-Loop Continuous Memory (`.memory/`):**
    - **Session Start:** Read `.memory/` (`ARCHITECTURE.md`, `PATTERNS.md`, `LESSONS.md`) to inherit learned knowledge.
    - **Session End / Feedback Loop:** Whenever a ticket finishes or user provides a correction, Butler automatically records the finding in `.memory/LESSONS.md` and updates `tasks-axi done <id>`.
@@ -31,8 +34,8 @@ Butler can be invoked directly by the user when working inside a project workspa
 
 > [!TIP]
 > **Cross-Platform Execution:**
-> - **Linux & macOS (Native):** Run commands directly (`tasks-axi`, `no-mistakes`, `gh-axi`).
-> - **Windows (WSL Bridge):** If tools are installed in WSL, run via `wsl <command>` (e.g. `wsl tasks-axi ready`, `wsl no-mistakes axi run --skip ci`).
+> - **Linux & macOS (Native):** Run commands directly (`frontier-axi`, `tasks-axi`, `no-mistakes`, `gh-axi`).
+> - **Windows (WSL Bridge):** If tools are installed in WSL, run via `wsl <command>` (e.g. `wsl frontier-axi list`, `wsl tasks-axi ready`, `wsl no-mistakes axi run --skip ci`).
 
 ---
 
@@ -40,11 +43,12 @@ Butler can be invoked directly by the user when working inside a project workspa
 
 | Situation / Intent | Recommended Flow | Execution Mode |
 | :--- | :--- | :--- |
-| **New Feature / Idea** | `/grill-with-docs` $\rightarrow$ `/to-spec` $\rightarrow$ `/to-tickets` $\rightarrow$ `tasks-axi` $\rightarrow$ `/implement` | Conductor (High) $\rightarrow$ Maid Subagent (Act) |
+| **New Feature / Idea (Foggy)** | `frontier-axi` $\rightarrow$ `/grill-with-docs` $\rightarrow$ `/to-spec` $\rightarrow$ `/to-tickets` $\rightarrow$ `tasks-axi` $\rightarrow$ `/implement` | Conductor (High) $\rightarrow$ Maid Subagent (Act) |
+| **Atomic Seam / Spike** | `frontier-axi` $\rightarrow$ `/grilling` $\rightarrow$ `frontier-axi promote` $\rightarrow$ `tasks-axi` $\rightarrow$ `/implement` | Conductor $\rightarrow$ Maid |
 | **UI / Frontend Feature or Bug** | `frontend-axi-tdd` $\rightarrow$ `/tdd` | Web/UI only (Zero-vision Accessibility & Console gate) |
 | **UI / Frontend Polish (Design)**| `frontend-design` $\rightarrow$ `ui-ux-pro-max` | In-Context (Tokens & A11y) |
 | **Code Review / PR Audit** | `/code-review` (Standards + Spec) | Conductor Review & Memory Sync |
-| **Huge / Foggy Project** | `/wayfinder` $\rightarrow$ `/to-spec` | Strategic Architecture First |
+| **Huge / Foggy Project** | `/wayfinder` $\rightarrow$ `frontier-axi` $\rightarrow$ `/to-spec` $\rightarrow$ `/to-tickets` | Strategic Architecture First |
 | **Embedded / CV / Non-Web Domains** | Domain specific TDD (`pytest` / native tests) | Do NOT invoke browser tools / devtools |
 
 ---
@@ -67,15 +71,18 @@ Spawn a lean worker subagent (`invoke_subagent` with `Role: "maid"`, `Model: "fl
 - **Strict Boundary:** The maid is strictly an implementer:
   1. Test-driven development (`/tdd`) at pre-agreed seams.
   2. Achieving green tests without modifying existing tests (Guardrail #1).
-  3. Verifying the outer gate: `no-mistakes axi run --skip ci`.
+  3. **Tier 1 Mandatory Local Gate:** Running `make check` (or project test/lint suite) and confirming `exit 0`.
+  4. Verifying the outer gate: `no-mistakes axi run --skip ci`.
 - **Worker Prohibition:** The maid subagent is **NEVER** asked to evaluate its own spec compliance or perform code review.
 
-### Step 3: Supervised Execution & Outer Gate Confirmation
-- Butler maintains active supervision. The worker must report a clean run of `no-mistakes axi run --skip ci` (exit code 0).
-- If `no-mistakes` fails or tests break, Butler keeps the worker focused on fixing the implementation in-context until exit code 0 is attained.
+### Step 3: Policy-Gated Verification
+Butler inspects the repository's `policy` in `projects.json`:
+- **If `policy: "yolo"` (Fast Prototype):** Worker runs `make check`. If tests and linter pass, skip `no-mistakes` and skip two-axis `/code-review`; proceed directly to Step 6 for instant merge.
+- **If `policy: "staged"` (Default):** Worker runs `make check` (exit 0) + `no-mistakes axi run --skip ci` (exit 0). If passed with Low risk, proceed to PR without blocking.
+- **If `policy: "strict"` (Production/High Stakes):** Worker runs `make check` (exit 0) + `no-mistakes axi run --skip ci` (exit 0). Then proceed to Step 4 for high-reasoning code review, with remote CI verification executed at the PR boundary.
 
-### Step 4: High-Reasoning Two-Axis `/code-review` Gate
-Once `no-mistakes` passes, **Butler executes the original `/code-review` skill flow**:
+### Step 4: High-Reasoning Two-Axis `/code-review` Gate (Strict Policy Only)
+For `strict` policy projects, Butler executes the original `/code-review` skill flow:
 - **Fixed Point:** Diff against `$BASE_SHA` (`git diff $BASE_SHA...HEAD`).
 - **Spec Source:** `tasks-axi show <id>`.
 - **Standards Source:** Repo `CODING_STANDARDS.md` + Fowler Code Smells baseline.
@@ -86,16 +93,22 @@ Butler reviews the diff along the two canonical axes:
 
 ### Step 5: Resolution & Fast-Path Healing
 - **Clean Pass:** Proceed directly to Step 6.
-- **Minor Nits (Fast-Path):** Butler fixes trivial typos, naming, or minor formatting directly in-context, runs `no-mistakes axi run` to verify, and commits.
-- **Spec Drift / Scope Creep:** Butler instructs the maid subagent to adjust implementation until `no-mistakes` passes cleanly.
+- **Minor Nits (Fast-Path):** Butler fixes trivial typos, naming, or minor formatting directly in-context, runs `make check` and `no-mistakes axi run --skip ci` to verify, and commits.
+- **Spec Drift / Scope Creep:** Butler instructs the maid subagent to adjust implementation until `make check` and `no-mistakes` pass cleanly.
 
 ### Step 6: Deterministic Sync & PR Emission
 1. **Close Ticket:** `tasks-axi done <task-id>`
 2. **Capture Lesson:** Append any edge case, tricky pattern, or user preference to `.memory/LESSONS.md`.
-3. **Emit PR:** When a slice is complete:
-   ```bash
-   gh-axi pr create \
-     --title "<type>(<scope>): <title> (#<task-id>)" \
-     --body "## Summary\nImplemented vertical slice for task <task-id>.\n\n## Verification\n- no-mistakes: PASSED\n- /code-review (Spec + Standards): PASSED against $BASE_SHA"
-   ```
+3. **Emit PR & Remote CI Verification:**
+   When a milestone or deployable slice is complete:
+   - For `strict` policy projects, Butler verifies the final remote GitHub Actions CI run:
+     ```bash
+     gh pr checks --watch
+     ```
+   - Emit PR:
+     ```bash
+     gh-axi pr create \
+       --title "<type>(<scope>): <title> (#<task-id>)" \
+       --body "## Summary\nImplemented vertical slice for task <task-id>.\n\n## Verification\n- make check (Local Lint/Types/Tests): PASSED\n- no-mistakes: PASSED\n- Remote CI: PASSED\n- /code-review (Spec + Standards): PASSED against $BASE_SHA"
+     ```
 4. **Report Frontier:** Query `tasks-axi ready` and advance to the next ticket or report to `/steward`.

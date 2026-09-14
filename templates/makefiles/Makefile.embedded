@@ -1,0 +1,12 @@
+.PHONY: check lint test build
+
+check: lint test build
+
+lint:
+	pio check --fail-on-defect=high
+
+test:
+	pio test -e native
+
+build:
+	pio run
