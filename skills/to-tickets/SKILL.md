@@ -32,6 +32,8 @@ Break the work into **tracer bullet** tickets.
 - A completed slice is demoable or verifiable on its own
 - Each slice is sized to fit in a single fresh context window
 - Any prefactoring should be done first
+- **Traceability Pointer:** Each ticket MUST declare `spec_ref: specs/<slug>.md` and its covered criteria: `covers: ["AC-01", ...]`
+- **Zero-Orphan Rule:** Every `[AC-xx]` from the originating spec must be covered across the tickets. No acceptance criteria may be left unassigned.
 
 </vertical-slice-rules>
 

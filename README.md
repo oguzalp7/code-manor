@@ -88,6 +88,19 @@ For Windows users, Code-Manor provides a seamless bridge between Windows IDEs/Ag
 
 ---
 
+### 3. Optional Engine: Antigravity CLI (`agy`)
+> [!TIP]
+> **🚀 Highly Recommended for Deterministic Model & Reasoning Routing:**
+> Code-Manor operates out-of-the-box using Antigravity's native `invoke_subagent` mechanism with zero configuration. However, for **deterministic model selection**, **enforced frugal reasoning effort (`--effort low`)**, **prevention of zombie subagents and SQLite bloat**, and the **3-Tier Traffic Light Context Gauge**, installing **`antigravity-cli` (`agy`)** is **strongly recommended**.
+>
+> - **Installation (Linux / macOS / WSL2):**
+>   ```bash
+>   curl -fsSL https://antigravity.google/cli/install.sh | bash
+>   ```
+> - **Graceful Fallback:** If `agy` is not found on your system PATH, Butler will not fail; it automatically switches to native in-process subagent mode (`invoke_subagent`) to continue resolving tickets uninterrupted.
+
+---
+
 ## 🤖 Harness Compatibility
 
 Code-Manor is **harness-agnostic** and operates cleanly across all major agent environments:

@@ -15,7 +15,7 @@ Butler can be invoked directly by the user when working inside a project workspa
 
 1. **High-Reasoning Conductor, Lean Maid Delegation:**
    - **Butler (Conductor):** Runs with high reasoning effort (`Gemini Thinking / High`). Owns strategic grilling, cognitive frontier management, architectural specs (`/to-spec`), ticket decomposition (`/to-tickets`), and QA synthesis.
-   - **Maid (Worker):** Once tracer-bullet tickets are drafted, Butler delegates isolated vertical slices to lean subagents (`invoke_subagent` with `Role: "maid"`, `Model: "flash"`) running `/implement` test-first (`/tdd`).
+   - **Maid (Worker):** Once tracer-bullet tickets are drafted, Butler delegates isolated vertical slices to lean workers via synchronous `agy -p` subprocesses (configured via `routing.json`, `effort: low`) running `/implement` test-first (`/tdd`).
    - **Review & Spec Integrity:** Maid workers are strictly forbidden from evaluating their own spec compliance. Butler independently executes `/code-review` (Spec + Standards against `$BASE_SHA`) before accepting any ticket.
 2. **Cognitive Frontier & Deterministic Task State (`frontier-axi` + `tasks-axi`):**
    - **Pre-Flight Cognitive Staging:** For broad, ambiguous, or foggy architectural requirements, Butler creates a topic via `frontier-axi add <id> "<title>"`.
@@ -65,15 +65,28 @@ Butler NEVER drops the ball after delegating. Delegating to a `maid` subagent is
    BASE_SHA=$(git rev-parse HEAD)
    ```
 
-### Step 2: Maid Worker Delegation (Context-Isolated)
-Spawn a lean worker subagent (`invoke_subagent` with `Role: "maid"`, `Model: "flash"`):
-- **Worker Prompt:** Pass **ONLY** the ticket specification (`## What to build` + `## Acceptance Criteria`) and relevant file boundaries, plus conversation pointer if needed.
-- **Strict Boundary:** The maid is strictly an implementer:
-  1. Test-driven development (`/tdd`) at pre-agreed seams.
-  2. Achieving green tests without modifying existing tests (Guardrail #1).
-  3. **Tier 1 Mandatory Local Gate:** Running `make check` (or project test/lint suite) and confirming `exit 0`.
-  4. Verifying the outer gate: `no-mistakes axi run --skip ci`.
-- **Worker Prohibition:** The maid subagent is **NEVER** asked to evaluate its own spec compliance or perform code review.
+### Step 2: Maid Worker Execution (`agy -p` Subprocess Mode)
+> [!IMPORTANT]
+> **Zero-Self-Code:** Butler MUST NOT call `write_to_file` or `replace_file_content` on `src/` or `tests/`. Butler strictly orchestrates via `/butler-takeover`.
+
+1. **Declarative Routing:** Butler reads `~/.gemini/config/plugins/code-manor/routing.json` (or project override) to fetch `maid.model`, `maid.effort`, and `maid.flags`.
+2. **Subprocess Dispatch with Session Persistence:**
+   - Butler maintains a single worker session (`MAID_CONV_ID`) per milestone batch.
+   - Dispatches the ticket via synchronous `agy -p`:
+     ```bash
+     agy --model <maid.model> --effort <maid.effort> <maid.flags> --conversation "$MAID_CONV_ID" -p "## Ticket Assignment: #<id> - <title>..."
+     ```
+3. **Strict Boundary:** The maid is strictly an implementer:
+   - Test-driven development (`/tdd`) at pre-agreed seams.
+   - Achieving green tests without modifying existing tests (Guardrail #1: Anti-Tampering).
+   - **Tier 1 Mandatory Local Gate:** Running `make check` and confirming `exit 0`.
+   - **Ticket Gate:** Running `no-mistakes axi run --skip ci` and confirming `exit 0`.
+4. **3-Tier Traffic Light Context Gauge (Green: 0-180k, Yellow: 180k-250k, Red: >250k):**
+   - Each ticket terminates cleanly at the OS process level upon return (`exit 0`). Zero dangling RAM or background daemons.
+   - **🟢 Green (0-180k):** Healthy session. Keep warm and dispatch next ticket.
+   - **🟡 Yellow (180k-250k):** Do not interrupt active run; at ticket completion boundary, refuse new tickets and rotate `$MAID_CONV_ID` cleanly.
+   - **🔴 Red (>250k):** Dump Zone circuit breaker. Abort stuck subprocess, salvage diff, and re-dispatch with fresh session.
+5. **Worker Prohibition:** The maid worker is **NEVER** asked to evaluate its own spec compliance or perform code review. Butler owns the review gate.
 
 ### Step 3: Policy-Gated Verification
 Butler inspects the repository's `policy` in `projects.json`:

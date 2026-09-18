@@ -48,6 +48,7 @@ When invoked, the agent should run the diagnostic check:
 which frontier-axi || echo "frontier-axi not found in PATH"
 which tasks-axi || echo "tasks-axi not found in PATH"
 which no-mistakes || echo "no-mistakes not found in PATH"
+which agy || echo "Notice: agy (antigravity-cli) not found. Fallback mode (invoke_subagent) will be active. Run: curl -fsSL https://antigravity.google/cli/install.sh | bash"
 gh auth status || echo "gh CLI not authenticated"
 
 # Auto-install AXI toolchains if missing
