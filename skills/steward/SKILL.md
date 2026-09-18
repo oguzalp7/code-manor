@@ -81,6 +81,15 @@ description: Master of the Estate & Multi-Project Portfolio Conductor. Serves as
    - Phase 2: `mobile-app` Butler updates client schema, runs `frontend-axi-tdd` / native tests, passes `no-mistakes`.
 3. Steward supervises the sequence without tangling both projects' contexts into one messy conversation.
 
+### 4. Milestone Dispatch to Butler ("/steward-dispatch")
+When a Frontier audit, Grilling, or architectural consensus is reached:
+1. Run `/steward-dispatch` to automatically compile `handoff.md` with:
+   - Settled frontier context & key decisions.
+   - `conversation://<id>` pointer.
+   - Target spec & ready tickets.
+2. Trigger `/butler-takeover` in the target project without requiring the human to manually copy IDs or prompts.
+
+
 ---
 
 ## 🚦 Phase Boundaries & Token Hygiene (`PHASE-BOUNDARIES.md`)

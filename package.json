@@ -1,6 +1,6 @@
 {
   "name": "code-manor",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Code-Manor: Antigravity-native multi-project orchestration distro (Steward -> Butler -> Maid). Blends Matt Pocock's domain modeling and craft with Kun Chen's AXI systems engineering and deterministic gates.",
   "author": "Oguz Alp",
   "license": "MIT",
@@ -17,5 +17,15 @@
     "cognitive-bridge",
     "matt-pocock",
     "kun-chen"
-  ]
+  ],
+  "peerDependencies": {
+    "tasks-axi": ">=1.0.0",
+    "frontier-axi": ">=1.0.0"
+  },
+  "optionalDependencies": {
+    "antigravity-cli": ">=1.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }

@@ -2,6 +2,8 @@
 
 **Code-Manor** is an Antigravity-native multi-project orchestration distribution. It blends **Matt Pocock's** cognitive domain craft and vertical-slice TDD with **Kun Chen's** L8 Principal systems engineering, AXI token frugality, and deterministic verification gates.
 
+> 📖 **Canonical Architecture Specification:** For full state machines, subprocess execution recipes, 3-tier context gauge thresholds, and cross-platform bridge specifications, see [ARCHITECTURE.md](../ARCHITECTURE.md).
+
 ---
 
 ## 🏛️ The Estate Staff Hierarchy
@@ -22,13 +24,13 @@
    - Manages the pre-flight cognitive frontier via `frontier-axi` (horizontal fog, open architectural questions, `/grilling`).
    - Drives `/ask-matt` taxonomy: synthesizes settled frontiers into specs (`/to-spec`) and decomposes them into tracer-bullet task graphs (`/to-tickets`).
    - Manages deterministic vertical task state via `tasks-axi` (`tasks-axi ready`, `tasks-axi done`).
-   - Dispatches isolated implementation tasks to `maid` subagents (`Model: "flash"`, Low/Frugal Reasoning).
+   - Dispatches isolated implementation tasks to `maid` via synchronous `agy -p` subprocesses configured via `routing.json` (`effort: low`).
    - Enforces the project's verification policy (`yolo`, `staged`, or `strict`).
 
-4. **The Maid (`maid` — Specialized Implementer Subagent):**
-   - Laser-focused implementer running in clean isolation (`Workspace: "branch"` or git worktree).
-   - Operates with Frugal/Low Reasoning (`Model: "flash"`). Zero existential wandering or architectural debate; strictly executes test-driven development (`/tdd`), turning red tests into green in `src/`.
-   - Never evaluates its own code or spec compliance; yields control back to Butler upon local test pass.
+4. **The Maid (`maid` — Specialized Implementer Subprocess):**
+   - Laser-focused implementer running in clean isolation (git worktree or branch).
+   - Operates with Frugal/Low Reasoning (model and effort loaded dynamically from `routing.json`). Zero existential wandering or architectural debate; strictly executes test-driven development (`/tdd`), turning red tests into green in `src/`.
+   - Executes via synchronous `agy -p --conversation "$MAID_CONV_ID"`, exiting cleanly upon test pass (`exit 0`) without lingering in RAM. Never evaluates its own code or spec compliance; yields control back to Butler.
 
 ---
 
@@ -61,3 +63,23 @@
        - **`strict` (Production / High-Stakes Repositories):**
          - *Ticket Phase:* Worker passes `make check` + `no-mistakes axi run --skip ci`.
          - *PR / Milestone Phase:* Butler verifies full remote CI (`gh pr checks --watch` or `no-mistakes axi run`) + conducts independent two-axis `/code-review` (Spec + Standards against `$BASE_SHA`) + Human signoff required before merge.
+
+5. **TRACEABILITY & CONTEXT POINTERS (Epic ➔ Frontier ➔ Spec ➔ Ticket):**
+   - **Specs:** Every spec document in `specs/` MUST declare `frontier_ref: FNT-xxx` in its frontmatter and list numbered Acceptance Criteria (`[AC-01]`, `[AC-02]`, etc.).
+   - **Tickets:** Every ticket in `.tasks.toml` / `backlog.md` MUST declare `spec_ref: specs/<slug>.md` and its covered criteria: `covers: ["AC-01", "AC-02"]`.
+   - **Zero Orphan Criteria:** Decomposing into tickets requires 100% AC coverage. No ticket execution begins with orphaned criteria.
+
+6. **SINGLE-WORKER POOL & ANTI-ZOMBIE LIFECYCLE (3-Tier Traffic Light Context Gauge):**
+   - **Subprocess Worker Execution:** Butler executes Maid as a synchronous CLI subprocess via `agy -p --conversation "$MAID_CONV_ID"` using declarative parameters from `routing.json`. The process exits cleanly at OS level upon return (`exit 0`). Zero dangling background daemons.
+   - **3-Tier Traffic Light Context Gauge:**
+     - 🟢 **Green Zone (0 – 180,000 tokens):** Smart execution zone. Butler preserves `$MAID_CONV_ID` warm across sequential tickets for prompt caching and momentum.
+     - 🟡 **Yellow Zone (180,000 – 250,000 tokens):** Graceful wrap-only zone. If crossed mid-ticket, do not kill; let Maid finish. At the ticket boundary, refuse new assignments and rotate `$MAID_CONV_ID` cleanly.
+     - 🔴 **Red Zone (> 250,000 tokens):** Dump Zone / Panic trigger. Indicates hallucination loop or stagnation. Butler immediately aborts the runaway process, salvages worktree diff, and initializes a fresh session with a distilled corrective instruction.
+   - **Milestone Reaping:** Once all tickets in a milestone complete, Butler unsets and retires the worker session cleanly before initiating Two-Axis Code Review. Zero zombie subagents or database fragmentation permitted.
+
+7. **BUTLER ZERO-SELF-CODE BOUNDARY:**
+   - Butler is exclusively an architect, conductor, and reviewer. Butler is strictly prohibited from modifying code in `src/` or `tests/`.
+   - Butler's writing scope is restricted to `.memory/**`, `specs/**`, `.tasks.toml`, `CONTEXT.md`, and `handoff.md`.
+
+8. **STEWARD-TO-BUTLER DISPATCH PAIR (`/steward-dispatch` & `/butler-takeover`):**
+   - Eliminates the human errand-boy role. Steward runs `/steward-dispatch` upon settling a frontier; Butler activates `/butler-takeover` to ingest `handoff.md` and execute the milestone autonomously.

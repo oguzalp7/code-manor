@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.1.0",
+  "routing": {
+    "steward": {
+      "model": "gemini-3.1-pro-high",
+      "effort": "high",
+      "description": "Grand conductor for portfolio frontiers, interviews, specs, and tickets."
+    },
+    "butler": {
+      "model": "gemini-3.1-pro-high",
+      "effort": "high",
+      "description": "Project conductor, ticket scheduler, and independent Two-Axis reviewer."
+    },
+    "maid": {
+      "model": "gemini-3.8-flash-low",
+      "effort": "low",
+      "flags": [
+        "--dangerously-skip-permissions"
+      ],
+      "gate_command": "no-mistakes axi run --skip ci",
+      "context_gauge": {
+        "green_zone_max": 180000,
+        "yellow_zone_max": 250000,
+        "hard_ceiling_dump_zone": 250000
+      },
+      "max_tickets_per_worker": 5,
+      "description": "Frugal vertical-slice TDD implementer running via agy -p subprocess with 3-tier Traffic Light context gauge (Green: 0-180k dispatch, Yellow: 180k-250k wrap-only, Red: >250k dump zone intervention)."
+    }
+  }
+}

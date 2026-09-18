@@ -22,21 +22,21 @@ Inspired by Kun Chen's `/ahoy` workflow and tailored for the razor-sharp, zero-f
 ## 📋 Response Format Template
 
 ```markdown
-### ⚓ İnenler (Landed)
-- `<task-id>` / `<repo>`: <1 satır özet ve durum>
+### ⚓ Landed
+- `<task-id>` / `<repo>`: <1-line summary and status>
 
-### 🌊 Seyirde Olanlar (Underway)
-- `<agent/task>`: <Şu an ne yapılıyor?>
+### 🌊 Underway
+- `<agent/task>`: <What is currently being executed?>
 
-### 🎯 Kaptanın Çağrısı (Captain's Call)
-- [ ] **Karar 1:** <Kısa soru> $\rightarrow$ [Seçenek A] | [Seçenek B]
-*(Eğer açık karar yoksa: "Açık karar bulunmuyor, seyir sakin.")*
+### 🎯 Captain's Call
+- [ ] **Decision 1:** <Concise question> $\rightarrow$ [Option A] | [Option B]
+*(If no open decisions exist: "No pending decisions; sailing is calm.")*
 
-### 🧭 Bağlam & Hız Göstergesi (Context Gauge)
-- **Oturum:** `<convo-title>`
-- **Bağlam Penceresi:** `<current-tokens>` / 250,000 Token (%<percentage>)
-- **Önbellek (Cache Hit):** %<cache-percentage>
-- **Durum:** 🟢 Güvenli Bölge (<150k) | 🟡 Dikkatli Seyir (150k-250k) | 🔴 Sıkıştırma/Handoff Önerilir (>250k)
+### 🧭 Context Gauge
+- **Session:** `<convo-title>`
+- **Context Window:** `<current-tokens>` / 250,000 Tokens (%<percentage>)
+- **Cache Hit:** %<cache-percentage>
+- **Status:** 🟢 Green Zone (<180k) | 🟡 Yellow Zone (180k-250k wrap-only) | 🔴 Red Dump Zone (>250k circuit breaker)
 ```
 
 ---

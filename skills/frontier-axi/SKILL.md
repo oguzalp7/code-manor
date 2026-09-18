@@ -23,105 +23,105 @@ In agentic software development, teams face two opposing risks:
 
 `frontier-axi` and `tasks-axi` are complementary twin pillars:
 
-| Dimensiyon | 🧭 `frontier-axi` | 📋 `tasks-axi` |
+| Dimension | 🧭 `frontier-axi` | 📋 `tasks-axi` |
 | :--- | :--- | :--- |
-| **Dilimleme Türü** | **Yatay Dilimler (Horizontal Slices):** Ucu açık mimari kararlar, veri modeli seçimleri, test dikişleri (seams), sistemik belirsizlikler. | **Dikey Dilimler (Vertical Slices):** Uçtan uca test edilebilir tracer-bullet iş paketleri (schema $\rightarrow$ API $\rightarrow$ UI $\rightarrow$ Test). |
-| **Aşama** | **Pre-Flight (Keşif & Tasarım):** Kod yazılmadan önceki beyin fırtınası, `/grilling` ve tasarım ağacı süreci. | **In-Flight (Yürütme & TDD):** Test-first geliştirme (`/tdd`), `make check` ve `no-mistakes` doğrulama kapıları. |
-| **Görev Niteliği** | *"Kararlar"* (Decisions & Open Questions) | *"Teslim Edilebilirler"* (Verifiable Deliverables) |
-| **Depolama (SSOT)**| `.frontier.toml` ve `frontier.md` | `.tasks.toml` ve `backlog.md` |
-| **Kullanıcı / Aktör**| Human Master + Conductor (`/steward`, `/butler`) | Implementer Worker (`maid`) |
+| **Slicing Nature** | **Horizontal Slices:** Open-ended architectural decisions, data model selections, test seams, systemic ambiguities. | **Vertical Slices:** End-to-end testable tracer-bullet work packages (schema $\rightarrow$ API $\rightarrow$ UI $\rightarrow$ Test). |
+| **Lifecycle Phase** | **Pre-Flight (Exploration & Design):** Brainstorming, `/grilling`, and design tree traversal before code is written. | **In-Flight (Execution & TDD):** Test-first implementation (`/tdd`), `make check`, and `no-mistakes` verification gates. |
+| **Task Nature** | *"Decisions & Inquiries"* (Decisions & Open Questions) | *"Deliverables"* (Verifiable Code & Tests) |
+| **Storage (SSOT)** | `.frontier.toml` and `frontier.md` | `.tasks.toml` and `backlog.md` |
+| **Primary Actor** | Human Master + Conductors (`/steward`, `/butler`) | Implementer Subprocess Worker (`maid`) |
 
 ---
 
-## 🔄 3. Bütünsel Yaşam Döngüsü & İş Akışı
+## 🔄 3. Holistic Lifecycle & Workflow
 
 ```mermaid
 flowchart TD
     Idea["💡 Nascent Idea / Foggy Requirement"] --> Stage["🧭 frontier-axi add <id> '<title>'"]
-    Stage --> Grilling["🔥 /grilling & /grill-with-docs (Röportaj)"]
+    Stage --> Grilling["🔥 /grilling & /grill-with-docs (Interview)"]
     Grilling --> Questions["❓ frontier-axi question add / resolve"]
-    Questions --> Settled["✅ Frontier Settled (Sis Dağıldı)"]
+    Questions --> Settled["✅ Frontier Settled (Fog Cleared)"]
     
-    subgraph Spec_And_Slice ["Matt Pocock Ana Omurgası"]
-        Settled --> ToSpec["📐 /to-spec (Seam'ler, Sözleşmeler, Spec)"]
-        ToSpec --> ToTickets["🎟️ /to-tickets (Dikey Tracer-Bullet Dilimleri)"]
+    subgraph Spec_And_Slice ["Matt Pocock Backbone"]
+        Settled --> ToSpec["📐 /to-spec (Seams, Contracts, Spec)"]
+        ToSpec --> ToTickets["🎟️ /to-tickets (Vertical Tracer-Bullet Slices)"]
     end
     
-    ToTickets --> TasksAxi["📋 tasks-axi add <id> (Yürütme DAG)"]
+    ToTickets --> TasksAxi["📋 tasks-axi add <id> (Execution DAG)"]
     TasksAxi --> FrontierClose["🏁 frontier-axi done <id>"]
-    TasksAxi --> Maid["🧹 maid Subagent (/tdd & make check)"]
+    TasksAxi --> Maid["🧹 maid Subprocess (/tdd & make check)"]
     
-    subgraph Fast_Path ["Atomik Spike Kestirmesi"]
+    subgraph Fast_Path ["Atomic Spike Shortcut"]
         Settled -.->|"frontier-axi promote <id>"| TasksAxi
     end
 ```
 
-### Akış Adımları:
-1. **Konuyu Sahneye Al (Stage):** Sisli veya araştırma gerektiren konuyu `frontier-axi add <id> "<title>"` ile başlatın.
-2. **Bilişsel Keskinleştirme (Sharpen):** `/grill-with-docs` (veya `/grill-me`) ile insanla turlar halinde röportaj yapın.
-   - Ortaya çıkan soruları `frontier-axi question add <id> "<question>"` ile kaydedin.
-   - Karara bağlananları `frontier-axi question resolve <id> <index> --answer "<answer>"` ile çözün.
-3. **Şartnameye ve Biletlere Dönüştür (Spec & Slice):**
-   - **Büyük / Çok Oturumlu Özellikler:** Sis dağıldığında **`/to-spec`** ile test dikişlerini ve şartnameyi yazın, ardından **`/to-tickets`** ile dikey dilimlere ayırıp `tasks-axi`'ye ekleyin.
-   - **Atomik / Tekil Spike'lar:** Doğrudan `frontier-axi promote <id>` çalıştırarak tekil bir `tasks-axi` bileti sentezleyin.
-4. **Yürütme:** `tasks-axi ready` ile sıradaki bileti `maid` subagent'ına devredin.
+### Flow Steps:
+1. **Stage the Topic:** Initialize foggy or research-heavy topics with `frontier-axi add <id> "<title>"`.
+2. **Sharpen Cognitively:** Conduct iterative interviews with the human via `/grill-with-docs` (or `/grill-me`).
+   - Log emergent questions: `frontier-axi question add <id> "<question>"`.
+   - Resolve settled questions: `frontier-axi question resolve <id> <index> --answer "<answer>"`.
+3. **Spec & Slice:**
+   - **Large / Multi-Session Features:** Once the fog clears, formalize seams and write the spec with **`/to-spec`**, then decompose into vertical slices with **`/to-tickets`** and register them in `tasks-axi`.
+   - **Atomic / Single Spikes:** Run `frontier-axi promote <id>` directly to synthesize a single `tasks-axi` ticket.
+4. **Execution:** Query unblocked tickets via `tasks-axi ready` and delegate to `maid` subprocess worker.
 
 ---
 
-## 💻 4. CLI Komut Referansı
+## 💻 4. CLI Command Reference
 
-`frontier-axi`, `axi-sdk-js` üzerine kuruludur ve AXI Standartlarına (TOON formatı, Smart Zone token tasarrufu) tam uyumludur:
+`frontier-axi` is built on `axi-sdk-js` and conforms to AXI Standards (TOON format, Smart Zone token frugality):
 
-### 1. Dashboard & Liste
-Argümansız çalıştırıldığında aktif bilişsel durumu özetler:
+### 1. Dashboard & Listing
+Running without arguments summarizes active cognitive state:
 ```bash
-# Aktif frontier özet tablosu
+# Summary table of active frontiers
 frontier-axi
 
-# Liste formatında görüntüleme
+# List view
 frontier-axi list
 ```
 
-### 2. Konu Ekleme & İnceleme
+### 2. Topic Creation & Inspection
 ```bash
-# Yeni bir sisli mimari konu aç
+# Stage a new foggy architectural topic
 frontier-axi add auth-seam "Determine session store seam vs JWT" --body "Redis vs JWT cookies comparison"
 
-# Konu detaylarını ve açık soruları incele
+# Inspect topic details and open questions
 frontier-axi show auth-seam --full
 ```
 
-### 3. Soru Yönetimi (Grilling Entegrasyonu)
+### 3. Question Management (Grilling Integration)
 ```bash
-# Açık bir mimari soruyu kaydet
+# Log an open architectural question
 frontier-axi question add auth-seam "Will we support multi-region session invalidation?"
 
-# Soruyu cevaplayarak çözüldü olarak işaretle
+# Resolve a question with recorded decision
 frontier-axi question resolve auth-seam 1 --answer "Yes, via Redis pub/sub."
 ```
 
-### 4. Terfi (Promote - Cognitive Bridge)
-Açık sorular çözüldüğünde konuyu otomatik olarak `tasks-axi` biletine dönüştürür:
+### 4. Promotion (Cognitive Bridge)
+Promotes a settled frontier topic directly into a `tasks-axi` ticket:
 ```bash
-# Simülasyon (dry-run)
+# Dry-run simulation
 frontier-axi promote auth-seam --dry-run
 
-# tasks-axi'ye aktar
+# Promote directly into tasks-axi backlog
 frontier-axi promote auth-seam --kind ship --priority 1
 ```
 
-### 5. Durum Kapatma & Arşiv
+### 5. Resolution & Archival
 ```bash
-# Tamamlandı/çözüldü olarak işaretle
+# Mark as completed/settled
 frontier-axi done auth-seam --reason "Settled in ADR-004 and split via /to-spec"
 
-# İptal et
+# Cancel out-of-scope topic
 frontier-axi cancel auth-seam --reason "Out of scope"
 ```
 
 ---
 
-## 🌉 5. Çapraz Platform Çalıştırma (Native & WSL)
+## 🌉 5. Cross-Platform Execution (Native & WSL)
 
 - **macOS & Linux (Native):**
   ```bash
@@ -136,9 +136,9 @@ frontier-axi cancel auth-seam --reason "Out of scope"
 
 ---
 
-## 📦 6. Kurulum & Güncelleme
+## 📦 6. Installation & Updates
 
 ```bash
-# Global kurulum (npm veya GitHub repo üzerinden)
+# Global installation (via npm or GitHub repository)
 npm install -g frontier-axi || npm install -g https://github.com/oguzalp7/frontier-axi.git
 ```

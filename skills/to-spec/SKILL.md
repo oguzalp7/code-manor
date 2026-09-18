@@ -19,6 +19,11 @@ Check with the user that these seams match their expectations.
 3. Write the spec using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
 
 <spec-template>
+---
+frontier_ref: <FNT-ID>
+title: <Spec Title>
+status: SETTLED
+---
 
 ## Problem Statement
 
@@ -27,6 +32,12 @@ The problem that the user is facing, from the user's perspective.
 ## Solution
 
 The solution to the problem, from the user's perspective.
+
+## Acceptance Criteria
+A numbered list of strict, testable acceptance criteria:
+- [AC-01] <Exact verifiable requirement 1>
+- [AC-02] <Exact verifiable requirement 2>
+
 
 ## User Stories
 
