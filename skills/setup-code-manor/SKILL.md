@@ -39,6 +39,23 @@ Run this skill to configure and verify the **Code-Manor** orchestration environm
 
 ---
 
+## ⚡ Quick CLI: `code-manor init .`
+
+In addition to running `/setup-code-manor` in chat, developers can initialize any project directly from the terminal via the bundled CLI:
+
+```bash
+# Initialize current directory into projects.json, provision .memory/, .frontier.toml, and Makefile:
+code-manor init .
+
+# Or with custom policy:
+code-manor init . --policy strict
+
+# List all registered projects:
+code-manor list
+```
+
+---
+
 ## 🚀 Execution Steps
 
 When invoked, the agent should run the diagnostic check:
