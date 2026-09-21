@@ -213,6 +213,16 @@ Butler reviews diff against baseline: `git diff $BASE_SHA...HEAD`.
 1. **Spec Axis:** Are all Acceptance Criteria in `specs/<slug>.md` satisfied without scope creep?
 2. **Standards Axis:** Does the code conform to Fowler clean architecture, explicit typing, and zero leaked abstractions?
 
+### 🐙 GitHub Integration, PR Lifecycle & Branch Safety Invariants:
+1. **Toolchain Dependency (`gh` CLI):** Autonomous PR creation and CI tracking rely on the GitHub CLI (`gh`), authenticated via `gh auth login`.
+2. **Milestone PR Model (Accumulating Commits):**
+   - Individual tickets commit locally to the active feature branch. PR emission occurs at the **Milestone Boundary** (`frontier-axi done`), never per micro-ticket.
+   - If multiple sequential frontiers execute on the same feature branch before merge, all commits stack onto that single open PR cleanly.
+3. **Squash and Merge Gating (`Human's Call`):**
+   - Under `strict` policy, Butler emits the PR and watches remote checks (`gh pr checks --watch`). The final **Squash and Merge** action is strictly reserved for the human.
+4. **Prompt-Based Policy Override:** The human may override any repository policy via natural language (e.g. *"Bypass PR and push directly to main this time"*). The agent complies immediately without dogmatic resistance.
+5. **Zero-Branch-Deletion Invariant:** Agents are strictly forbidden from deleting, force-pushing, or pruning branches (`git branch -D`, `git push --delete`). Existing legacy or backup branches are preserved indefinitely.
+
 ---
 
 ## 🐧 7. Cross-Platform Bridge Architecture (Windows $\leftrightarrow$ WSL2)

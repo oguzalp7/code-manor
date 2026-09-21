@@ -134,7 +134,45 @@ Previously, developers acted as errand-boys copying prompts and conversation IDs
 
 ---
 
-## 📐 5. Starting a Project: DDD, Single-File `.memory/DECISIONS.md` & Deep Modules
+## 🐙 5. GitHub Integration, PR Lifecycle & Branch Safety
+
+Code-Manor interfaces directly with GitHub via the GitHub CLI (`gh`), managing pull requests deterministically while protecting developer history.
+
+### 1. The Milestone PR Model (Accumulating Commits)
+- **Ticket Level:** Maid commits vertical slices locally to the active feature branch. Tickets do **not** generate individual PRs.
+- **Milestone Level:** A PR is emitted only when a complete frontier milestone is settled and verified.
+- **Sequential Frontiers on the Same Branch:** If multiple frontiers execute sequentially on the same active branch before merging, commits accumulate cleanly onto that single open PR. This is intentional: it prevents PR sprawl and keeps code review unified.
+
+### 2. Policy Enforcement & Squash and Merge (`Human's Call`)
+- **`strict` Policy (Production / Critical Repositories):** Butler emits the PR, verifies remote CI (`gh pr checks --watch`), and reports the Two-Axis Review summary. The final **Squash and Merge** action is strictly reserved for the human (**Human's Call**).
+- **`staged` Policy (Default):** Fast ticket iterations with automated merges only when risk assessment is low.
+- **`yolo` Policy (Prototypes):** Bypasses PRs and commits directly.
+
+### 3. Prompt-Based Policy Override
+The human always maintains ultimate authority over repository rules. You can override policies for a single operation with a simple prompt:
+> *"Bypass the PR process this time; run `make check` and push directly to `main`."*
+Butler will comply immediately without dogmatic resistance.
+
+### 4. Zero-Branch-Deletion Invariant (Legacy & Backup Protection)
+> [!IMPORTANT]
+> **Agents are strictly forbidden from deleting, force-pushing, or pruning branches (`git branch -D`, `git push --delete`).**  
+> Existing feature branches, legacy backups, and historical codebases remain completely safe.  
+> 💡 *Pro-Tip:* To create an immutable, indestructible historical checkpoint for legacy production branches, tag the commit:
+> ```bash
+> git tag legacy-production-backup <branch-name>
+> git push origin legacy-production-backup
+> ```
+
+### 5. Post-Merge Golden Routine
+After performing a Squash and Merge on GitHub, keep your local workspace in sync:
+```bash
+git checkout main
+git pull origin main
+```
+
+---
+
+## 📐 6. Starting a Project: DDD, Single-File `.memory/DECISIONS.md` & Deep Modules
 
 ```mermaid
 flowchart LR
@@ -168,7 +206,7 @@ Traditional setups scatter architecture decision records across 20 individual fi
 
 ---
 
-## 🏗️ 6. Approaching Unknown, Spagetti, or Legacy Codebases
+## 🏗️ 7. Approaching Unknown, Spagetti, or Legacy Codebases
 
 > [!CAUTION]
 > ### 🛑 DISCLAIMER & REALISTIC BOUNDARIES
@@ -200,7 +238,7 @@ flowchart TD
 
 ---
 
-## ⚡ 7. The Native `code-manor` CLI Tool
+## ⚡ 8. The Native `code-manor` CLI Tool
 
 Code-Manor provides a zero-friction cross-platform CLI tool (`code-manor`) available globally on your terminal (Windows PowerShell/CMD and Linux/WSL):
 
@@ -225,7 +263,7 @@ code-manor --help
 
 ---
 
-## 🚦 8. The 3-Tier Traffic Light Context Gauge
+## 🚦 9. The 3-Tier Traffic Light Context Gauge
 
 ```mermaid
 stateDiagram-v2
@@ -263,7 +301,7 @@ stateDiagram-v2
 
 ---
 
-## 🤝 9. Open Technical Debts & Call to Action (Fork & PR)
+## 🤝 10. Open Technical Debts & Call to Action (Fork & PR)
 
 While Code-Manor was engineered with universal architectural principles, its current low-level subprocess orchestration has two open technical debts tied specifically to the Google Antigravity ecosystem:
 
@@ -282,7 +320,7 @@ We invite practitioners across the AI developer ecosystem to help make Code-Mano
 
 ---
 
-## ⚡ 10. Quick Start Installation
+## ⚡ 11. Quick Start Installation
 
 ```bash
 # macOS / Linux:
