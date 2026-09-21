@@ -241,3 +241,25 @@ WSL2 Ubuntu (/home/<user>/.gemini/config/plugins/code-manor/)
    Edits made on Windows immediately update WSL, and vice-versa.
 2. **Execution Path:** CLI agents (`agy`), AXI tools (`tasks-axi`, `frontier-axi`), and gates (`no-mistakes`) execute natively in Linux to avoid Windows console escaping and file locking issues.
 3. **Database Isolation:** CLI conversations reside in WSL SQLite (`~/.gemini/antigravity-cli/conversations/`), insulating the Desktop GUI from subagent cemetery bloat.
+
+---
+
+## 🤝 8. Open Technical Debts & Multi-Harness Community Call to Action
+
+While Code-Manor was engineered with universal architectural principles, its current low-level subprocess orchestration has two open technical debts tied specifically to the Google Antigravity ecosystem:
+
+1. **Subprocess Execution Engine (`agy -p` Dependency):**  
+   The synchronous run-to-completion worker model currently relies on the `antigravity-cli` (`agy -p`) binary. For other harnesses (Claude Code, OpenAI Codex, Cursor, Grok), this requires provider-specific subprocess bridges or CLI adapters.
+2. **3-Tier Context Gauge Monitoring:**  
+   The Green/Yellow/Red context gauge thresholds (180k/250k) are currently monitored via `agy` token accounting and local SQLite logs. Different providers report token usage through different interfaces (APIs, hooks, or transcript files).
+
+### 📢 Call to Action: Fork, Build & PR
+We warmly invite external contributors, teams, and open-source practitioners to help make Code-Manor truly harness-universal:
+
+1. **Fork the Repository:** Create your own branch or fork at `github.com/oguzalp7/code-manor`.
+2. **Implement Your Harness Bridge:**
+   - Under `skills/` or `.agents/`, develop the CLI adapter or hook for your target environment (e.g. `claude-code`, `codex-runner`, `cursor-agent`).
+   - Implement the graceful fallback and token count monitor.
+3. **Verify Locally:** Ensure `make check` and the multi-project fleet tests pass cleanly.
+4. **Submit a Pull Request:** Open a PR back to `main`. Once reviewed along our Two-Axis Review Gate (Spec + Standards), we will merge your integration into the canonical distribution!
+

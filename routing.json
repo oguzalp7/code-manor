@@ -3,12 +3,12 @@
   "version": "1.1.0",
   "routing": {
     "steward": {
-      "model": "gemini-3.1-pro-high",
+      "model": "gemini-3.8-flash-high",
       "effort": "high",
       "description": "Grand conductor for portfolio frontiers, interviews, specs, and tickets."
     },
     "butler": {
-      "model": "gemini-3.1-pro-high",
+      "model": "gemini-3.8-flash-high",
       "effort": "high",
       "description": "Project conductor, ticket scheduler, and independent Two-Axis reviewer."
     },

@@ -4,6 +4,9 @@
   "description": "Code-Manor: Antigravity-native multi-project orchestration distro (Steward -> Butler -> Maid). Blends Matt Pocock's domain modeling and craft with Kun Chen's AXI systems engineering and deterministic gates.",
   "author": "Oguz Alp",
   "license": "MIT",
+  "bin": {
+    "code-manor": "./bin/code-manor.js"
+  },
   "keywords": [
     "antigravity",
     "agent-skills",
