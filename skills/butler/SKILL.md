@@ -79,8 +79,9 @@ Butler NEVER drops the ball after delegating. Delegating to a `maid` subagent is
 3. **Strict Boundary:** The maid is strictly an implementer:
    - Test-driven development (`/tdd`) at pre-agreed seams.
    - Achieving green tests without modifying existing tests (Guardrail #1: Anti-Tampering).
-   - **Tier 1 Mandatory Local Gate:** Running `make check` and confirming `exit 0`.
-   - **Ticket Gate:** Running `no-mistakes axi run --skip ci` and confirming `exit 0`.
+   - **Anti-Fake Testing Rule:** Strictly forbidden from writing fake tests that inspect source code via `fs.readFileSync` or regex; tests must strictly assert on runtime function I/O or rendered user behavior.
+   - **Tier 1 Mandatory Hermetic Local Gate:** Running `make check` and confirming `exit 0` (must be hermetic: lint + typecheck + unit tests; zero external DB/daemon dependencies).
+   - **Ticket Gate:** Running the gate command configured in `routing.json` (`maid.gate_command`, e.g. `no-mistakes axi run --skip ci`) and confirming `exit 0`.
 4. **3-Tier Traffic Light Context Gauge (Green: 0-180k, Yellow: 180k-250k, Red: >250k):**
    - Each ticket terminates cleanly at the OS process level upon return (`exit 0`). Zero dangling RAM or background daemons.
    - **🟢 Green (0-180k):** Healthy session. Keep warm and dispatch next ticket.

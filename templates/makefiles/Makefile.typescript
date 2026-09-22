@@ -1,12 +1,21 @@
-.PHONY: check lint typecheck test
+.PHONY: check lint typecheck test test:unit test:integration
 
-check: lint typecheck test
+# Tier 1 Mandatory Local Gate: STRICTLY HERMETIC (Zero external DB/Docker/network dependencies)
+check: lint typecheck test:unit
 
 lint:
 	npm run lint
 
 typecheck:
 	npx tsc --noEmit
+
+# Hermetic unit tests only (fast, in-memory)
+test:unit:
+	npm run test:unit 2>/dev/null || npm test -- --testPathIgnorePatterns="integration" 2>/dev/null || npm test
+
+# Integration / E2E tests (run in CI or when local DB/daemons are running)
+test:integration:
+	npm run test:integration 2>/dev/null || npm test
 
 test:
 	npm test

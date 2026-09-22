@@ -1,12 +1,21 @@
-.PHONY: check lint typecheck test
+.PHONY: check lint typecheck test test:unit test:integration
 
-check: lint typecheck test
+# Tier 1 Mandatory Local Gate: STRICTLY HERMETIC (Zero external DB/Docker/network dependencies)
+check: lint typecheck test:unit
 
 lint:
 	uv run ruff check .
 
 typecheck:
 	uv run pyright
+
+# Hermetic unit tests only (fast, in-memory)
+test:unit:
+	uv run pytest -q -m "not integration" 2>/dev/null || uv run pytest -q
+
+# Integration tests (run in CI or when local daemons are running)
+test:integration:
+	uv run pytest -q -m "integration"
 
 test:
 	uv run pytest -q

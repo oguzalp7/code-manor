@@ -152,11 +152,11 @@ function initCommand(args) {
   const makefilePath = path.join(absPath, 'Makefile');
   let makefileCreated = false;
   if (!fs.existsSync(makefilePath)) {
-    let makefileTemplate = `.PHONY: check test\n\ncheck: test\n\ntest:\n\techo "Configure test command in Makefile"\n`;
+    let makefileTemplate = `.PHONY: check test test:unit test:integration\n\n# Hermetic local gate (zero external DB/network required)\ncheck: test:unit\n\ntest:unit:\n\techo "Configure hermetic unit test command in Makefile"\n\ntest:integration:\n\techo "Configure integration test command in Makefile"\n\ntest:\n\techo "Configure test command in Makefile"\n`;
     if (stack === 'typescript' || stack === 'javascript') {
-      makefileTemplate = `.PHONY: check lint typecheck test\n\ncheck: lint typecheck test\n\nlint:\n\tnpm run lint\n\ntypecheck:\n\tnpx tsc --noEmit\n\ntest:\n\tnpm test\n`;
+      makefileTemplate = `.PHONY: check lint typecheck test test:unit test:integration\n\n# Tier 1 Mandatory Hermetic Local Gate (Zero external DB/Docker/network)\ncheck: lint typecheck test:unit\n\nlint:\n\tnpm run lint\n\ntypecheck:\n\tnpx tsc --noEmit\n\ntest:unit:\n\tnpm run test:unit 2>/dev/null || npm test -- --testPathIgnorePatterns="integration" 2>/dev/null || npm test\n\ntest:integration:\n\tnpm run test:integration 2>/dev/null || npm test\n\ntest:\n\tnpm test\n`;
     } else if (stack === 'python') {
-      makefileTemplate = `.PHONY: check lint typecheck test\n\ncheck: lint test\n\nlint:\n\truff check .\n\ntest:\n\tpytest\n`;
+      makefileTemplate = `.PHONY: check lint typecheck test test:unit test:integration\n\n# Tier 1 Mandatory Hermetic Local Gate (Zero external DB/Docker/network)\ncheck: lint typecheck test:unit\n\nlint:\n\truff check .\n\ntypecheck:\n\tpyright\n\ntest:unit:\n\tpytest -q -m "not integration" 2>/dev/null || pytest -q\n\ntest:integration:\n\tpytest -q -m "integration"\n\ntest:\n\tpytest\n`;
     }
     fs.writeFileSync(makefilePath, makefileTemplate, 'utf8');
     makefileCreated = true;

@@ -36,9 +36,9 @@
 
 ## 🛡️ Non-Negotiable Guardrails
 
-1. **TEST TAMPERING STRICTLY FORBIDDEN (Zero-Tolerance):**
-   - When resolving bugs, fixing type errors, or implementing features, modifying assertion lines or removing test cases in existing `tests/` or `__tests__/` files to force green is strictly prohibited.
-   - Fix implementation files in `src/`.
+1. **TEST TAMPERING & FAKE TESTING STRICTLY FORBIDDEN (Zero-Tolerance):**
+   - **No Assertion Deletion:** When resolving bugs, fixing type errors, or implementing features, modifying assertion lines or removing test cases in existing `tests/` or `__tests__/` files to force green is strictly prohibited. Fix implementation files in `src/`.
+   - **No Fake Tests (Shift-Left Test Quality):** Tests must import modules and assert against runtime function I/O, component rendering, or user behavior. Writing fake tests that inspect source code files via `fs.readFileSync`, `readFile`, or regex/string matching to assert classes or function names exist is strictly prohibited and constitutes an immediate gate violation.
 
 2. **DETERMINISTIC SINGLE SOURCE OF TRUTH (SSOT) DUALITY:**
    - **Cognitive Frontier State (Upstream Horizontal):** Nascent ideas, horizontal architectural seams, foggy decisions, and open questions live exclusively in `frontier-axi` (`.frontier.toml` and `frontier.md`). Prematurely dumping vague tickets directly into `tasks-axi` is strictly forbidden.
@@ -51,10 +51,11 @@
    - Work is passed via structured specs and handoff notes, paired with an exact conversation pointer: `conversation://<conversation-id>`.
    - If an agent encounters ambiguity, it uses targeted `grep` on that specific conversation's `transcript.jsonl` rather than bloating the active window.
 
-4. **DETERMINISTIC VERIFICATION GATES (Two-Tier Gate: Local make check + Project Policy):**
-   - **Tier 1: Mandatory Local Gate (`make check` — Non-Negotiable):**
+4. **DETERMINISTIC VERIFICATION GATES (Two-Tier Gate: Hermetic Local make check + Project Policy):**
+   - **Tier 1: Mandatory Hermetic Local Gate (`make check` — Non-Negotiable):**
      - Before completing any ticket, closing `tasks-axi`, or running `no-mistakes`, the worker (`maid`) MUST run the repository's canonical check:
-       `make check` (or language equivalent: lint + typecheck + unit tests) and verify it exits 0.
+       `make check` (or language equivalent: lint + typecheck + hermetic unit tests) and verify it exits 0.
+     - **Hermeticity Invariant:** `make check` MUST be completely hermetic (zero external dependencies, zero Docker/PostgreSQL/Redis daemons, zero network). It must only run fast in-memory unit tests (`test:unit`). Integration or database-dependent tests belong exclusively in `make test:integration` or CI.
      - Never push code that breaks local linting or static typing.
    - **Tier 2: Policy-Gated Outer & CI Verification:**
      - Each repository declares a `policy` in `projects.json` (`yolo`, `staged`, or `strict`):

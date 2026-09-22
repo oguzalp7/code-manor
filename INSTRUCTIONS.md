@@ -261,6 +261,19 @@ code-manor --help
 - **Standard Baseline Provisioning:** Generates `.memory/` (`ARCHITECTURE.md`, `DECISIONS.md`, `LESSONS.md`), `.frontier.toml`, `.tasks.toml`, and the canonical `make check` `Makefile`.
 - **Global Fleet Synchronization:** Updates `~/.gemini/antigravity/projects.json` so `/steward` immediately knows the project exists without searching.
 
+### 🛠️ 8.1 Project Onboarding & Hermetic Makefile Configuration (Butler Responsibility)
+
+When a project is newly registered into Code-Manor (via `code-manor init .` or `/setup-code-manor`), the project-level **Butler** is responsible for inspecting the repository's test toolchain and configuring the `Makefile` to enforce the **Hermetic Local Gate**:
+
+1. **The Hermeticity Mandate:** `make check` is the Tier 1 Mandatory Local Gate executed before any ticket can be marked done. It MUST be 100% hermetic (fast in-memory unit tests, zero external PostgreSQL, Docker, Redis, or network dependencies).
+2. **Separating Unit vs. Integration Tests:** If `npm test` or `pytest` runs database-dependent integration tests, Butler must verify that the `Makefile` separates them:
+   - `check: lint typecheck test:unit`
+   - `test:unit`: runs fast, in-memory unit tests only (e.g. `npm run test:unit` or `vitest run --exclude "**/*.integration.*"`).
+   - `test:integration`: runs integration tests requiring external databases or Docker containers.
+   - `test`: runs the full test suite.
+3. **No Flaky Gates:** Maid workers should never be blocked by offline local databases or missing background services during ticket iteration.
+4. **Shift-Left Test Quality Rule:** Butler enforces that Maid never writes fake tests using `fs.readFileSync` or regex; tests must assert on pure function I/O or rendered user behavior.
+
 ---
 
 ## 🚦 9. The 3-Tier Traffic Light Context Gauge

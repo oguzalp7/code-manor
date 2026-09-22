@@ -36,7 +36,7 @@ Code-Manor organizes agentic software delivery as a strict British household hie
 ### 🔒 Core Invariants (Non-Negotiable)
 
 1. **Butler Zero-Self-Code Boundary:** Butler is exclusively an architect, conductor, and reviewer. Butler MUST NOT modify files in `src/` or `tests/`. Writing scope is restricted to `.memory/**`, `specs/**`, `.tasks.toml`, `CONTEXT.md`, and `handoff.md`.
-2. **Maid Anti-Tampering Rule:** Modifying assertion lines or deleting existing tests in `tests/` to force green is strictly forbidden. Green tests must be achieved solely by modifying implementation files in `src/`.
+2. **Maid Anti-Tampering & Anti-Fake-Testing Rule:** Modifying assertion lines or deleting existing tests in `tests/` to force green is strictly forbidden. Furthermore, writing fake tests that inspect source code via `fs.readFileSync`, `readFile`, or regex/string matching is strictly forbidden. Tests must assert against runtime function I/O, component rendering, or user behavior.
 3. **No Dangling Background Daemons:** Maid is executed strictly as a synchronous run-to-completion CLI subprocess (`agy -p`). Zero dangling subagent daemons or orphaned background workers are permitted in RAM.
 4. **Single Worker Session per Batch:** Butler reuses at most ONE warm worker session (`$MAID_CONV_ID`) per milestone batch, subject to the 3-Tier Traffic Light Context Gauge.
 
@@ -142,10 +142,11 @@ agy --model <maid.model> \
 ### Operating Instructions:
 THINKING EFFORT: LOW / EXECUTION-ONLY.
 1. Implement red test in tests/ based on Acceptance Criteria.
-2. Implement code in src/ to make it green without tampering with existing tests.
-3. Run make check and confirm exit code 0.
-4. Run no-mistakes axi run --skip ci and confirm exit code 0.
-5. Report exit code and diff summary."
+2. ⛔ TEST QUALITY RULE (ZERO-TOLERANCE): Never write tests that inspect source code via fs.readFileSync or string regex. Tests must strictly assert on pure function I/O or rendered user behavior. Violations will fail the gate.
+3. Implement code in src/ to make it green without tampering with existing tests.
+4. Run mandatory local gate: make check and confirm exit code 0.
+5. MANDATORY VERIFICATION GATE: Run the gate command from routing.json (<maid.gate_command>, e.g. no-mistakes axi run --skip ci), confirm exit code 0, and output the terminal result.
+6. Report exit code and diff summary."
 ```
 
 ---
@@ -201,8 +202,11 @@ Quality gates are deterministic and policy-driven. Code is never merged on agent
 ```
 
 ### Verification Tiers:
-- **Tier 1: Mandatory Local Gate (`make check`):**
-  - Lint + typecheck + unit tests. Must exit 0 before any ticket is marked done in `tasks-axi`.
+- **Tier 1: Mandatory Hermetic Local Gate (`make check`):**
+  - Strictly Hermetic: Lint + typecheck + unit tests (`test:unit`).
+  - **Zero Daemon Invariant:** Must run completely in-memory without external PostgreSQL, Redis, Docker, or network dependencies.
+  - Integration/E2E tests belong in `make test:integration` or remote CI, never in `make check`.
+  - Must exit 0 before any ticket is marked done in `tasks-axi`.
 - **Tier 2: Policy-Gated Verification (`projects.json`):**
   - `yolo`: Fast iteration. Requires `make check`. Skips heavy `no-mistakes` and two-axis review.
   - `staged`: Default. Requires `make check` + `no-mistakes axi run --skip ci` exit 0.
@@ -236,7 +240,7 @@ Windows Host (Antigravity 2.0 GUI / IDE)
             │ (NTFS-to-ext4 Symlink)
             ▼
 WSL2 Ubuntu (/home/<user>/.gemini/config/plugins/code-manor/)
-  ├── ~/.local/bin/agy (Linux CLI Binary)
+  ├── ~/.local/bin/agy (Symlink to Windows /mnt/c/.../agy.exe or Linux binary)
   ├── /usr/local/bin/tasks-axi & frontier-axi
   ├── /usr/local/bin/no-mistakes
   └── tmux sessions (Steward / Butler / Maid execution panes)
@@ -249,7 +253,10 @@ WSL2 Ubuntu (/home/<user>/.gemini/config/plugins/code-manor/)
    ln -s /mnt/c/Users/<user>/.gemini/config/plugins ~/.gemini/config/plugins
    ```
    Edits made on Windows immediately update WSL, and vice-versa.
-2. **Execution Path:** CLI agents (`agy`), AXI tools (`tasks-axi`, `frontier-axi`), and gates (`no-mistakes`) execute natively in Linux to avoid Windows console escaping and file locking issues.
+2. **Execution Path & CLI Shim:**
+   - On WSL, Windows `agy.exe` is symlinked into the Linux user PATH (`~/.local/bin/agy` or `/usr/local/bin/agy` -> `/mnt/c/.../agy.exe`).
+   - Non-interactive and subagent calls execute via login shell (`bash -lc`) or global `/usr/local/bin` to ensure PATH resolution remains stable across all execution contexts.
+   - CLI agents (`agy`), AXI tools (`tasks-axi`, `frontier-axi`), and gates (`no-mistakes`) execute natively in Linux to avoid Windows console escaping and file locking issues.
 3. **Database Isolation:** CLI conversations reside in WSL SQLite (`~/.gemini/antigravity-cli/conversations/`), insulating the Desktop GUI from subagent cemetery bloat.
 
 ---

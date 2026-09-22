@@ -29,17 +29,17 @@ description: Automated takeover protocol for Butler. Reads handoff.md, pins BASE
    ```bash
    BASE_SHA=$(git rev-parse HEAD)
    ```
-3. Load model routing from `routing.json`:
+3. Load model routing and gate command from `routing.json`:
    - Inspect `~/.gemini/config/plugins/code-manor/routing.json` (or `.agents/routing.json` if overridden).
-   - Extract `maid.model`, `maid.effort`, `maid.flags`, and `maid.context_gauge` (`green_zone_max: 180000`, `yellow_zone_max: 250000`, `hard_ceiling_dump_zone: 250000`).
+   - Extract `maid.model`, `maid.effort`, `maid.flags`, `maid.gate_command` (default: `"no-mistakes axi run --skip ci"`), and `maid.context_gauge` (`green_zone_max: 180000`, `yellow_zone_max: 250000`, `hard_ceiling_dump_zone: 250000`).
 
 ### Step 2: Maid Worker Execution (`agy -p` Subprocess Mode with Fallback)
 Butler delegates vertical-slice tickets sequentially using clean CLI subprocesses, or falls back to native subagents if `agy` is not installed:
 
 1. **Engine Detection & Graceful Fallback:**
-   Butler checks if `agy` exists in PATH (`which agy || which agy.exe`):
+   Butler checks if `agy` exists in PATH (`which agy || which agy.exe || test -f ~/.local/bin/agy || test -f /usr/local/bin/agy`):
    - **Mode A: Subprocess Mode (`agy` found - Recommended):** Proceed with steps 2-4 below for 100% deterministic model routing, zero zombie processes, and 3-tier context gauge.
-   - **Mode B: In-Process Fallback Mode (`agy` missing):** Butler falls back to native `invoke_subagent(Role: "maid", Model: "flash", Workspace: "branch")` and dispatches via `send_message`. Emits a short warning: *"Notice: agy CLI not found; operating in native in-process subagent mode. Installing antigravity-cli is highly recommended."*
+   - **Mode B: In-Process Fallback Mode (`agy` missing):** Butler falls back to native `invoke_subagent(Role: "maid", Model: "flash", Workspace: "branch")` and dispatches via `send_message`. Emits a short warning: *"Notice: agy CLI not found; operating in native in-process subagent mode. Installing antigravity-cli is highly recommended."* Note: Fallback subagents must be killed immediately via `manage_subagents(Action: "kill")` upon ticket completion to prevent token leakage.
 
 2. **Manage Worker Session (`MAID_CONV_ID`):**
    - If `MAID_CONV_ID` is unset (milestone start or post-retirement), initialize a fresh UUID:
@@ -60,21 +60,26 @@ Butler delegates vertical-slice tickets sequentially using clean CLI subprocesse
 ### Instructions:
 THINKING EFFORT: LOW / EXECUTION-ONLY.
 1. Implement red test in tests/ based on Acceptance Criteria. Do not tamper with existing tests.
-2. Implement code in src/ to make it green.
-3. Run make check and confirm exit code 0.
-4. Run no-mistakes axi run --skip ci and confirm exit code 0.
-5. Report exit code and diff summary."
+2. ⛔ TEST QUALITY RULE (ZERO-TOLERANCE):
+   - Never write tests that inspect source code via fs.readFileSync, readFile, or string regex.
+   - Tests must strictly assert on runtime function I/O or rendered user behavior. Violations will fail the gate immediately.
+3. Implement code in src/ to make tests green without tampering with existing tests.
+4. Run mandatory local gate: make check and confirm exit code 0 (must be hermetic, zero DB/network required).
+5. MANDATORY VERIFICATION GATE:
+   - Run the gate command: <maid.gate_command> (e.g. no-mistakes axi run --skip ci)
+   - Confirm exit code 0.
+6. Report exit code, raw terminal output of the gate command, and git diff summary."
    ```
-3. **Process Safety & Graceful Termination:**
+4. **Process Safety & Graceful Termination:**
    - Because `agy -p` is run-to-completion, the process terminates immediately upon ticket completion (`exit 0`).
    - Zero background daemon or orphan RAM process is left behind.
    - Context is preserved on disk in `<MAID_CONV_ID>.db` for warm reuse in subsequent tickets.
 
 ### Step 3: Ticket Iteration Loop & 3-Tier Traffic Light Context Gauge
 1. Await Maid subprocess exit code:
-   - Confirm `make check` exited 0 (local gate).
-   - Confirm `no-mistakes axi run --skip ci` exited 0 (ticket gate).
-   - Verify test files in `tests/` were not tampered with.
+   - Confirm `make check` exited 0 (hermetic local gate).
+   - Confirm `<maid.gate_command>` was executed and exited 0 (ticket gate).
+   - Verify test files in `tests/` were not tampered with and no fake `fs.readFileSync`/regex tests were written.
 2. Mark ticket as done: `tasks-axi done <ticket-id>`.
 3. **The 3-Tier Traffic Light Context Gauge Protocol:**
    Butler evaluates token consumption against the thresholds declared in `routing.json`:
