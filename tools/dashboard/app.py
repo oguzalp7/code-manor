@@ -1,5 +1,6 @@
 # Code-Manor Telemetry Dashboard (feat-agent-telemetry-dashboard)
 import streamlit as st
+import streamlit.components.v1 as components
 import os
 import json
 import sqlite3
@@ -597,74 +598,135 @@ with tab1:
             events = parse_transcript_events(transcript_file)
             st.caption(f"Loaded {len(events)} conversation events from `{transcript_file}`")
 
-            # Feed Display Controls
-            col_ctrl1, col_ctrl2, col_ctrl3 = st.columns([1.5, 1, 1])
+            # Navigation & Display Controls
+            col_ctrl1, col_ctrl2, col_ctrl3, col_ctrl4 = st.columns([1, 1, 1.2, 1.2])
             with col_ctrl1:
-                display_order = st.radio(
-                    "Akış Yönü",
-                    ["Kronolojik (Eskiden Yeniye ⬇️)", "Ters Kronolojik (Yeniden Eskiye ⬆️)"],
-                    index=0,
-                    horizontal=True,
-                    help="Varsayılan: Konuşmanın başlangıcından sonuna doğru doğal akış (Yukarıdan aşağıya)."
-                )
+                btn_top = st.button("⬆️ En Başa Git", use_container_width=True, help="Sohbetin en başına kaydır")
             with col_ctrl2:
-                show_thinking = st.checkbox("Show Thinking Process", value=True)
+                btn_bottom = st.button("⬇️ En Sona Git", use_container_width=True, help="Sohbetin en sonuna kaydır")
             with col_ctrl3:
+                show_thinking = st.checkbox("Show Thinking Process", value=True)
+            with col_ctrl4:
                 show_tool_outputs = st.checkbox("Show Tool Execution Outputs", value=True)
 
-            ordered_events = events if "Eskiden Yeniye" in display_order else list(reversed(events))
+            # Determine scroll target (default: bottom)
+            if "last_cid" not in st.session_state or st.session_state["last_cid"] != cid:
+                st.session_state["last_cid"] = cid
+                st.session_state["scroll_target"] = "bottom"
 
-            # Render Events Feed
-            for ev in ordered_events:
-                kind = ev["kind"]
-                s_idx = ev["step_index"]
-                s_time = ev.get("time", "")
+            if btn_top:
+                st.session_state["scroll_target"] = "top"
+            elif btn_bottom:
+                st.session_state["scroll_target"] = "bottom"
 
-                if kind == "user":
-                    with st.chat_message("user"):
-                        st.markdown(f"**User Prompt** (Step `{s_idx}` — `{s_time}`)")
-                        st.markdown(ev.get("content", ""))
+            target_pos = st.session_state.get("scroll_target", "bottom")
+            st.session_state["scroll_target"] = "bottom"
 
-                elif kind == "assistant":
-                    with st.chat_message("assistant"):
-                        st.markdown(f"**Agent Response** (Step `{s_idx}` — `{s_time}`)")
+            # Dedicated Scrollable Container
+            chat_container = st.container(height=650)
+            with chat_container:
+                st.markdown('<div id="chat-stream-top"></div>', unsafe_allow_html=True)
 
-                        # Thinking Trace
-                        thinking = ev.get("thinking", "")
-                        if thinking and show_thinking:
-                            with st.expander(f"💭 Thinking Trace ({len(thinking)} chars)", expanded=False):
-                                st.markdown(thinking)
+                # Render Events Feed (Chronological from Step 0 to Step N)
+                for ev in events:
+                    kind = ev["kind"]
+                    s_idx = ev["step_index"]
+                    s_time = ev.get("time", "")
 
-                        # Tool Calls & Paired Results
-                        tool_calls = ev.get("tool_calls", [])
-                        tool_results = ev.get("tool_results", [])
-                        if tool_calls:
-                            for t_idx, tc in enumerate(tool_calls):
-                                t_name = tc.get("name", tc.get("toolName", "tool"))
-                                t_summary = tc.get("toolSummary", tc.get("toolAction", ""))
-                                t_args = clean_tool_args(tc.get("args", tc.get("arguments", {})))
+                    if kind == "user":
+                        with st.chat_message("user"):
+                            st.markdown(f"**User Prompt** (Step `{s_idx}` — `{s_time}`)")
+                            st.markdown(ev.get("content", ""))
 
-                                with st.expander(f"🔧 Tool: `{t_name}` — *{t_summary}*", expanded=False):
-                                    st.markdown("**Arguments:**")
-                                    st.json(t_args)
+                    elif kind == "assistant":
+                        with st.chat_message("assistant"):
+                            st.markdown(f"**Agent Response** (Step `{s_idx}` — `{s_time}`)")
 
-                                    if show_tool_outputs and t_idx < len(tool_results):
-                                        res_content = tool_results[t_idx]
-                                        st.markdown("**Output:**")
-                                        if res_content and res_content.strip():
-                                            st.code(res_content[:5000], language="text")
-                                        else:
-                                            st.caption("(Empty tool output)")
+                            # Thinking Trace
+                            thinking = ev.get("thinking", "")
+                            if thinking and show_thinking:
+                                with st.expander(f"💭 Thinking Trace ({len(thinking)} chars)", expanded=False):
+                                    st.markdown(thinking)
 
-                        # Main Assistant Text Content
-                        content = ev.get("content", "")
-                        if content and content.strip():
-                            st.markdown(content)
+                            # Tool Calls & Paired Results
+                            tool_calls = ev.get("tool_calls", [])
+                            tool_results = ev.get("tool_results", [])
+                            if tool_calls:
+                                for t_idx, tc in enumerate(tool_calls):
+                                    t_name = tc.get("name", tc.get("toolName", "tool"))
+                                    t_summary = tc.get("toolSummary", tc.get("toolAction", ""))
+                                    t_args = clean_tool_args(tc.get("args", tc.get("arguments", {})))
 
-                elif kind == "system":
-                    with st.chat_message("system"):
-                        st.markdown(f"ℹ️ **System Notification** (Step `{s_idx}` — `{s_time}`)")
-                        st.markdown(ev.get("content", ""))
+                                    with st.expander(f"🔧 Tool: `{t_name}` — *{t_summary}*", expanded=False):
+                                        st.markdown("**Arguments:**")
+                                        st.json(t_args)
+
+                                        if show_tool_outputs and t_idx < len(tool_results):
+                                            res_content = tool_results[t_idx]
+                                            st.markdown("**Output:**")
+                                            if res_content and res_content.strip():
+                                                st.code(res_content[:5000], language="text")
+                                            else:
+                                                st.caption("(Empty tool output)")
+
+                            # Main Assistant Text Content
+                            content = ev.get("content", "")
+                            if content and content.strip():
+                                st.markdown(content)
+
+                    elif kind == "system":
+                        with st.chat_message("system"):
+                            st.markdown(f"ℹ️ **System Notification** (Step `{s_idx}` — `{s_time}`)")
+                            st.markdown(ev.get("content", ""))
+
+                st.markdown('<div id="chat-stream-bottom"></div>', unsafe_allow_html=True)
+
+            # Auto-scroll and instant button scrolling via client JS
+            components.html(f"""
+            <script>
+            function performScroll(target) {{
+                try {{
+                    const doc = window.parent.document;
+                    const markerId = (target === 'top') ? 'chat-stream-top' : 'chat-stream-bottom';
+                    const marker = doc.getElementById(markerId);
+
+                    if (marker) {{
+                        marker.scrollIntoView({{ behavior: 'smooth', block: (target === 'top' ? 'start' : 'end') }});
+                    }}
+
+                    const wrappers = doc.querySelectorAll('[data-testid="stVerticalBlockBorderWrapper"]');
+                    wrappers.forEach(w => {{
+                        const inner = w.querySelector('[data-testid="stVerticalBlock"]') || w;
+                        if (inner.scrollHeight > inner.clientHeight) {{
+                            inner.scrollTo({{
+                                top: (target === 'top' ? 0 : inner.scrollHeight),
+                                behavior: 'smooth'
+                            }});
+                        }}
+                    }});
+                }} catch(e) {{
+                    console.warn("Scroll error:", e);
+                }}
+            }}
+
+            try {{
+                const doc = window.parent.document;
+                const buttons = doc.querySelectorAll('button');
+                buttons.forEach(btn => {{
+                    const label = btn.innerText || "";
+                    if (label.includes('En Başa Git')) {{
+                        btn.onclick = () => performScroll('top');
+                    }} else if (label.includes('En Sona Git')) {{
+                        btn.onclick = () => performScroll('bottom');
+                    }}
+                }});
+            }} catch(e) {{}}
+
+            setTimeout(() => performScroll('{target_pos}'), 50);
+            setTimeout(() => performScroll('{target_pos}'), 200);
+            setTimeout(() => performScroll('{target_pos}'), 500);
+            </script>
+            """, height=0, width=0)
 
         else:
             st.warning(f"Could not locate transcript file for session `{cid}`.")
