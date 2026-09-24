@@ -15,7 +15,7 @@ Butler can be invoked directly by the user when working inside a project workspa
 
 1. **High-Reasoning Conductor, Lean Maid Delegation:**
    - **Butler (Conductor):** Runs with high reasoning effort (`Gemini Thinking / High`). Owns strategic grilling, cognitive frontier management, architectural specs (`/to-spec`), ticket decomposition (`/to-tickets`), and QA synthesis.
-   - **Maid (Worker):** Once tracer-bullet tickets are drafted, Butler delegates isolated vertical slices to lean workers via synchronous `agy -p` subprocesses (configured via `routing.json`, `effort: low`) running `/implement` test-first (`/tdd`).
+   - **Maid (Worker):** Once tracer-bullet tickets are drafted, Butler delegates isolated vertical slices to lean workers via the autonomous loop driver (`bin/run_maid_loop.sh`, configured via `routing.json`, `effort: low` with `flash_lite` fallback) running `/implement` test-first (`/tdd`).
    - **Review & Spec Integrity:** Maid workers are strictly forbidden from evaluating their own spec compliance. Butler independently executes `/code-review` (Spec + Standards against `$BASE_SHA`) before accepting any ticket.
 2. **Cognitive Frontier & Deterministic Task State (`frontier-axi` + `tasks-axi`):**
    - **Pre-Flight Cognitive Staging:** For broad, ambiguous, or foggy architectural requirements, Butler creates a topic via `frontier-axi add <id> "<title>"`.
@@ -65,17 +65,18 @@ Butler NEVER drops the ball after delegating. Delegating to a `maid` subagent is
    BASE_SHA=$(git rev-parse HEAD)
    ```
 
-### Step 2: Maid Worker Execution (`agy -p` Subprocess Mode)
+### Step 2: Maid Worker Execution (`run_maid_loop.sh` Driver Mode with Fallback)
 > [!IMPORTANT]
 > **Zero-Self-Code:** Butler MUST NOT call `write_to_file` or `replace_file_content` on `src/` or `tests/`. Butler strictly orchestrates via `/butler-takeover`.
 
-1. **Declarative Routing:** Butler reads `~/.gemini/config/plugins/code-manor/routing.json` (or project override) to fetch `maid.model`, `maid.effort`, and `maid.flags`.
-2. **Subprocess Dispatch with Session Persistence:**
-   - Butler maintains a single worker session (`MAID_CONV_ID`) per milestone batch.
-   - Dispatches the ticket via synchronous `agy -p`:
+1. **Declarative Routing:** Butler reads `~/.gemini/config/plugins/code-manor/routing.json` (or project override) to fetch `maid.model`, `maid.effort`, `maid.fallback_model` (`"flash_lite"`), `maid.loop_driver` (`"bin/run_maid_loop.sh"`), and `maid.flags`.
+2. **Autonomous Driver Dispatch with Git-Status-Aware Synchronization:**
+   - Butler passes the ticket assignment prompt to the autonomous multi-turn driver:
      ```bash
-     agy --model <maid.model> --effort <maid.effort> <maid.flags> --conversation "$MAID_CONV_ID" -p "## Ticket Assignment: #<id> - <title>..."
+     bash ~/.gemini/config/plugins/code-manor/bin/run_maid_loop.sh .memory/scratch/ticket-<id>.txt 10
      ```
+   - **Mode B Fallback:** If `agy` is missing, Butler invokes native `invoke_subagent(Role: "maid", Model: "flash_lite", Workspace: "branch")`.
+   - **Sync Protocol:** When Maid finishes its turn and becomes idle/exits, the driver inspects `git status`. If sync is disrupted by code edits, the driver executes `make check` synchronously at OS level. If green, runs the gate command and pushes to GitHub. If tests fail, errors are fed back via `agy --continue` for another turn.
 3. **Strict Boundary:** The maid is strictly an implementer:
    - Test-driven development (`/tdd`) at pre-agreed seams.
    - Achieving green tests without modifying existing tests (Guardrail #1: Anti-Tampering).

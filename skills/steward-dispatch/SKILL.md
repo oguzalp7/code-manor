@@ -25,7 +25,7 @@ When a Frontier audit, Grilling session, or HITL architecture decision is settle
    ```
 
 ### Step 2: Generate Canonical `handoff.md`
-Steward writes or overwrites `handoff.md` in the target project root (e.g. `/home/oguz/MS-Randevu-monolith/handoff.md`):
+Steward writes or overwrites `handoff.md` in the target project root (e.g. `<project-root>/handoff.md`):
 
 ```markdown
 # 🏰 Code-Manor Milestone Handoff: Steward ➔ Butler

@@ -112,41 +112,27 @@ Model configurations and reasoning effort levels are never hardcoded inside prom
 
 ---
 
-## 🚀 4. Subprocess Worker Execution Engine (`agy -p`)
+## 🚀 4. Subprocess Worker Execution Engine (`run_maid_loop.sh`)
 
-Butler drives Maid as an isolated operating system process rather than an in-memory GUI subagent.
+Butler drives Maid as an isolated operating system process managed by the autonomous multi-turn loop driver (`bin/run_maid_loop.sh`) rather than an in-memory high-reasoning GUI subagent.
 
 ### Invariants:
-- **Synchronous Execution:** Butler triggers Maid via CLI and awaits process exit.
-- **Run-to-Completion:** `agy -p` terminates immediately upon ticket completion (`exit 0`). File descriptors, PID, and RAM are reclaimed instantly by the OS.
-- **Session Continuity:** Context history is preserved on disk in `<MAID_CONV_ID>.db` for warm prompt caching across sequential tickets.
+- **Autonomous Multi-Turn Looping:** Avoids the single-turn premature exit and 5-second background task teardown of bare `agy -p`. The driver coordinates turns via `agy --continue` until tests pass.
+- **Git-Status-Aware Synchronization Protocol:**
+  - If the git working tree is clean and synchronized, redundant baseline `make check` is skipped.
+  - When Maid completes a turn and becomes idle/exits, the driver inspects `git status`.
+  - If sync is disrupted by code edits, the driver executes `make check` synchronously at the OS level (completely immune to tool timeout truncations).
+  - If `make check` passes (exit 0), runs `<maid.gate_command>`, commits, and pushes verified changes to GitHub (`git push`).
+  - If `make check` fails, the failure trace is fed back to Maid via `agy --continue` to fix in the next turn without deleting assertions.
+- **Frugal In-Process Fallback (`flash_lite`):** If `agy` CLI is unavailable, Butler falls back to native `invoke_subagent` using **`Model: "flash_lite"`** (NOT `"flash"` or `"pro"`), guaranteeing minimal/zero reasoning token consumption and protecting user quota.
 
 ### Execution Command Recipe:
 ```bash
-# 1. Initialize Worker Session (if unset):
-MAID_CONV_ID=$(uuidgen 2>/dev/null || python3 -c 'import uuid; print(uuid.uuid4())')
+# 1. Butler prepares ticket prompt file:
+PROMPT_FILE=".memory/scratch/ticket-<id>.txt"
 
-# 2. Dispatch Ticket via Synchronous Subprocess:
-agy --model <maid.model> \
-    --effort <maid.effort> \
-    <maid.flags> \
-    --conversation "$MAID_CONV_ID" \
-    -p "## Ticket Assignment: #<id> - <title>
-
-### What to build:
-<spec-content>
-
-### Acceptance Criteria:
-<criteria>
-
-### Operating Instructions:
-THINKING EFFORT: LOW / EXECUTION-ONLY.
-1. Implement red test in tests/ based on Acceptance Criteria.
-2. ⛔ TEST QUALITY RULE (ZERO-TOLERANCE): Never write tests that inspect source code via fs.readFileSync or string regex. Tests must strictly assert on pure function I/O or rendered user behavior. Violations will fail the gate.
-3. Implement code in src/ to make it green without tampering with existing tests.
-4. Run mandatory local gate: make check and confirm exit code 0.
-5. MANDATORY VERIFICATION GATE: Run the gate command from routing.json (<maid.gate_command>, e.g. no-mistakes axi run --skip ci), confirm exit code 0, and output the terminal result.
-6. Report exit code and diff summary."
+# 2. Dispatch via Autonomous Loop Driver:
+bash ~/.gemini/config/plugins/code-manor/bin/run_maid_loop.sh "$PROMPT_FILE" 10
 ```
 
 ---

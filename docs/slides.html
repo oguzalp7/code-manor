@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code-Manor: Vibe Coding'den L8 Disiplinine | Sunum</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            manor: {
+              50: '#f4f6fb',
+              100: '#e8edf6',
+              200: '#cbd8ed',
+              300: '#9eb8de',
+              400: '#6b92cc',
+              500: '#4873ba',
+              600: '#35599d',
+              700: '#2b4780',
+              800: '#263d6b',
+              900: '#1b2947',
+              950: '#0d1527',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Menlo', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .slide {
+      display: none;
+      opacity: 0;
+      transform: scale(0.985);
+      transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+    }
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: scale(1);
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 35px -5px rgba(6, 182, 212, 0.25);
+    }
+    .glow-indigo {
+      box-shadow: 0 0 45px -10px rgba(99, 102, 241, 0.3);
+    }
+    .glow-rose {
+      box-shadow: 0 0 35px -5px rgba(244, 63, 94, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col overflow-hidden relative selection:bg-cyan-500 selection:text-slate-950">
+
+  <!-- Ambient Glow Background -->
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/2 -right-40 w-[30rem] h-[30rem] bg-cyan-600/15 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 left-1/3 w-[32rem] h-[32rem] bg-violet-600/10 rounded-full blur-3xl"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-25"></div>
+  </div>
+
+  <!-- Top Progress Bar -->
+  <div class="w-full bg-slate-900/80 h-1.5 fixed top-0 left-0 z-50">
+    <div id="progress-bar" class="bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-500 h-full w-0 transition-all duration-300"></div>
+  </div>
+
+  <!-- Header / Breadcrumbs -->
+  <header class="w-full h-14 border-b border-slate-800/80 flex items-center justify-between px-8 z-40 bg-slate-950/60 backdrop-blur-md">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-cyan-400 flex items-center justify-center font-bold text-slate-950 text-base shadow-sm">
+        🏰
+      </div>
+      <div>
+        <h1 class="text-sm font-semibold tracking-wide text-slate-200">CODE-MANOR</h1>
+        <p class="text-[11px] text-slate-400">Vibe-Coding'den L8 Mühendislik Disiplinine</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-4 text-xs font-mono text-slate-400">
+      <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-cyan-400">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        ESTATE ARCHITECTURE
+      </span>
+      <span id="slide-number" class="text-slate-300 font-semibold">1 / 10</span>
+    </div>
+  </header>
+
+  <!-- Slide Stage Container -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-6 py-4 flex items-center justify-center z-10 relative">
+
+    <!-- ================= SLIDE 1: HERO ================= -->
+    <section class="slide active flex-col items-center justify-center text-center max-w-5xl" data-slide="1" data-notes="Herkese selamlar. Bugün yapay zeka destekli yazılım geliştirmede neredeyse herkesin yaşadığı ama kimsenin açıkça adını koymadığı o büyük tıkanıklığı konuşacağız: Vibe-coding çıkmazı. Code-Manor ile yazılım mühendisliğini nasıl disiplinli bir malikane hiyerarşisine dönüştürdüğümüzü aktaracağım.">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-950/60 border border-indigo-700/50 text-indigo-300 text-xs font-medium mb-6">
+        <span class="text-base">🏛️</span> Antigravity Multi-Project Orchestration Distribution
+      </div>
+      
+      <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+        Vibe Coding Çıkmazından<br>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400">L8 Mühendislik Disiplinine</span>
+      </h1>
+      
+      <p class="text-lg md:text-xl text-slate-300 max-w-3xl mb-10 leading-relaxed">
+        Matt Pocock’un etki alanı zanaati (Domain Craft) ve dikey dilim TDD yaklaşımı ile Kun Chen’in deterministik AXI sistem mühendisliği birleşti.
+      </p>
+
+      <!-- Badge Strip -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl text-left">
+        <div class="glass-panel p-4 rounded-xl border border-slate-800 hover:border-cyan-500/40 transition">
+          <div class="text-cyan-400 text-xs font-mono mb-1 font-semibold">DUAYEN YAKLAŞIM</div>
+          <div class="text-sm font-semibold text-slate-100">Matt Pocock: Domain Craft</div>
+          <div class="text-xs text-slate-400 mt-1">Ask-Matt taksonomisi & Dikey dilim (Tracer-bullet) mimarisi.</div>
+        </div>
+        <div class="glass-panel p-4 rounded-xl border border-slate-800 hover:border-indigo-500/40 transition">
+          <div class="text-indigo-400 text-xs font-mono mb-1 font-semibold">SİSTEM MÜHENDİSLİĞİ</div>
+          <div class="text-sm font-semibold text-slate-100">Kun Chen: Axi Ekosistemi</div>
+          <div class="text-xs text-slate-400 mt-1">Sıfır API maliyeti, TOML/Markdown tabanlı deterministik SSOT.</div>
+        </div>
+        <div class="glass-panel p-4 rounded-xl border border-slate-800 hover:border-purple-500/40 transition">
+          <div class="text-purple-400 text-xs font-mono mb-1 font-semibold">DOĞRULAMA BEKÇİSİ</div>
+          <div class="text-sm font-semibold text-slate-100">no-mistakes & İki Eksenli İnceleme</div>
+          <div class="text-xs text-slate-400 mt-1">Anti-tampering, tavizsiz testler ve GitHub Actions CI.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 2: THE PROBLEM ================= -->
+    <section class="slide flex-col max-w-5xl w-full" data-slide="2" data-notes="Hepimiz gördük: Modele 'Şu özelliği ekle' diyorsunuz. 15 dosyaya birden dokunuyor, bağlam şişiyor, hafıza çürüyor. Daha da kötüsü; yazdığı kod testten geçmeyince, gidip gizlice test dosyasındaki assertion satırını siliyor ve size 'Tüm testler geçti patron!' diyor. Birkaç hafta sonra elinizde kimsenin dokunmaya cesaret edemediği devasa bir spagetti kalıyor.">
+      <div class="text-rose-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">SEKTÖREL KRİZ</div>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">"Vibe-Coding" Tuzağı & Terminal Kaosu</h2>
+      <p class="text-sm text-slate-400 mb-6">Disiplinsiz LLM ajanlarının bir projeyi birkaç hafta içinde nasıl çökerttiğinin anatomisi.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+        <!-- Failure modes -->
+        <div class="space-y-3">
+          <div class="glass-panel p-4 rounded-xl border-l-4 border-l-rose-500">
+            <h3 class="text-sm font-semibold text-rose-300 flex items-center gap-2">
+              <span>🚨</span> Test Tampering (Test Sahtekarlığı)
+            </h3>
+            <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+              Model testten geçemeyince kodunu düzeltmek yerine <code>tests/</code> dosyasındaki <code>expect(...)</code> assertion satırlarını gizlice siler veya gevşetir.
+            </p>
+          </div>
+
+          <div class="glass-panel p-4 rounded-xl border-l-4 border-l-amber-500">
+            <h3 class="text-sm font-semibold text-amber-300 flex items-center gap-2">
+              <span>🌫️</span> Context Rot & Halüsinasyon Sarmalı
+            </h3>
+            <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+              50.000 tokenlık devasa sohbet pencereleri, terminal log dökümleri ve ajanın kendi uydurduğu kararlar arasında kaybolması.
+            </p>
+          </div>
+
+          <div class="glass-panel p-4 rounded-xl border-l-4 border-l-purple-500">
+            <h3 class="text-sm font-semibold text-purple-300 flex items-center gap-2">
+              <span>🧟</span> Zombi Daemon'lar & RAM Sızıntısı
+            </h3>
+            <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+              Arka planda asılı kalan, öldürülmeyen alt-süreçler, bilgisayarı ısıtan gereksiz loop'lar ve terminal karmaşası.
+            </p>
+          </div>
+        </div>
+
+        <!-- Terminal Diff Mockup -->
+        <div class="rounded-xl overflow-hidden border border-slate-800 bg-slate-950 flex flex-col font-mono text-xs shadow-2xl">
+          <div class="bg-slate-900 px-4 py-2 border-b border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span> git diff tests/auth.spec.ts</span>
+            <span class="text-rose-400 font-semibold">DANGER: SILENT TAMPERING</span>
+          </div>
+          <div class="p-4 space-y-1 overflow-x-auto text-[11px] leading-relaxed">
+            <div class="text-slate-500">@@ -45,6 +45,4 @@ describe('Auth', () => {</div>
+            <div class="text-slate-400">   it('rejects expired JWT token', async () => {</div>
+            <div class="text-slate-400">     const res = await verifyToken(expiredToken);</div>
+            <div class="bg-rose-950/60 text-rose-300 px-1 py-0.5 rounded flex items-center justify-between">
+              <span>-    expect(res.status).toBe(401);</span>
+              <span class="text-[9px] bg-rose-900 text-rose-200 px-1 rounded">DELETED BY LLM</span>
+            </div>
+            <div class="bg-rose-950/60 text-rose-300 px-1 py-0.5 rounded flex items-center justify-between">
+              <span>-    expect(res.error).toBe('TOKEN_EXPIRED');</span>
+              <span class="text-[9px] bg-rose-900 text-rose-200 px-1 rounded">DELETED BY LLM</span>
+            </div>
+            <div class="bg-emerald-950/40 text-emerald-300 px-1 py-0.5 rounded">
+              <span>+    expect(true).toBe(true); // "Tüm testler geçti!"</span>
+            </div>
+            <div class="text-slate-400">   });</div>
+            <div class="text-slate-500 mt-4 text-[10px] italic border-t border-slate-900 pt-2 text-rose-400">
+              ⚡ Code-Manor kuralı: Test tampering tespit edildiği an süreç derhal iptal edilir!
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 3: MATT POCOCK OVERVIEW ================= -->
+    <section class="slide flex-col max-w-5xl w-full" data-slide="3" data-notes="Code-Manor'ın temelinde iki büyük mühendislik aklı var. İlki, Total TypeScript'ten tanıdığımız duayen mühendis Matt Pocock. Matt'in yaklaşımı çok nettir: Zihinsel sisi kodlama aşamasına taşıyamazsınız. Bir özelliği kafanızda tam netleştirmeden bir yapay zekaya kodlatmaya çalışırsanız felaket kaçınılmazdır. Bu yüzden Grilling ile soruları tüketiriz, mimari sınırları çizeriz, ardından bunu dikey dilimlere böleriz.">
+      <div class="text-cyan-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">DUAYEN YAKLAŞIM</div>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Matt Pocock: Cognitive Domain Craft</h2>
+      <p class="text-sm text-slate-400 mb-6">Zihinsel sisi (cognitive fog) kodlama katmanından radikal bir şekilde ayırmak.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
+        <div class="glass-panel p-5 rounded-xl border border-slate-800 hover:border-cyan-500/40 transition flex flex-col justify-between">
+          <div>
+            <div class="w-9 h-9 rounded-lg bg-cyan-950/80 border border-cyan-800 text-cyan-300 flex items-center justify-center font-bold mb-4">
+              01
+            </div>
+            <h3 class="text-base font-semibold text-slate-100 mb-2">Ask-Matt Taksonomisi</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              Fikirler baştan "sisli"dir. LLM'e doğrudan "bunu yaz" denilmez. <code>/grilling</code> ile tüm açık sorular tüketilir, şartnameye (<code>/to-spec</code>) ve dikey biletlere (<code>/to-tickets</code>) dökülür.
+            </p>
+          </div>
+          <div class="bg-slate-900/90 rounded p-2 text-[11px] font-mono text-cyan-300 border border-slate-800">
+            Fog ➔ Grilling ➔ Spec ➔ Tickets
+          </div>
+        </div>
+
+        <div class="glass-panel p-5 rounded-xl border border-slate-800 hover:border-indigo-500/40 transition flex flex-col justify-between">
+          <div>
+            <div class="w-9 h-9 rounded-lg bg-indigo-950/80 border border-indigo-800 text-indigo-300 flex items-center justify-center font-bold mb-4">
+              02
+            </div>
+            <h3 class="text-base font-semibold text-slate-100 mb-2">Dikey Dilimleme</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              Katman katman (Controller, Service, DAO) yatay iş bölmek yerine; kullanıcıya değer üreten tek bir dikey tracer bullet. Her dilim tek başına test edilebilir ve deploy edilebilir.
+            </p>
+          </div>
+          <div class="bg-slate-900/90 rounded p-2 text-[11px] font-mono text-indigo-300 border border-slate-800">
+            Acceptance Criteria (AC-01..n)
+          </div>
+        </div>
+
+        <div class="glass-panel p-5 rounded-xl border border-slate-800 hover:border-purple-500/40 transition flex flex-col justify-between">
+          <div>
+            <div class="w-9 h-9 rounded-lg bg-purple-950/80 border border-purple-800 text-purple-300 flex items-center justify-center font-bold mb-4">
+              03
+            </div>
+            <h3 class="text-base font-semibold text-slate-100 mb-2">Test-Driven Dev (TDD)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              Asla spekülatif ("belki lazım olur") kod yazılmaz. Önce başarısız olan kırmızı test yazılır, ardından sadece testi geçirecek en az (frugal) kod üretilir ve refactor edilir.
+            </p>
+          </div>
+          <div class="bg-slate-900/90 rounded p-2 text-[11px] font-mono text-purple-300 border border-slate-800">
+            Red ➔ Green ➔ Refactor
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 4: THE ARCHITECTURE MATRIX (NEW) ================= -->
+    <section class="slide flex-col max-w-5xl w-full" data-slide="4" data-notes="Geleneksel yazılımda işler yatay katmanlara bölünür: Önce tüm veritabanı, sonra tüm API'ler, sonra tüm UI. Bu yaklaşım yapay zeka ajanları için tam bir kabustur! Çünkü hiçbir şey tek başına test edilemez ve context penceresi patlar. Matt Pocock'un dikey dilimleme mimarisinde ise bir özelliği en tepedeki UI'dan en alttaki DB ve testine kadar dar ama eksiksiz bir koridorda, yani bir Tracer Bullet olarak keseriz!">
+      <div class="text-cyan-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">MİMARİ MATRİS</div>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Yatay Katmanlar vs. Dikey Dilimler</h2>
+      <p class="text-sm text-slate-400 mb-5">Neden geleneksel katmanlar AI için felakettir ve Tracer Bullet neden çalışır?</p>
+
+      <!-- Comparison Stage -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-5 w-full items-stretch">
+        
+        <!-- Left: Horizontal Silo Fail -->
+        <div class="md:col-span-5 glass-panel p-4 rounded-xl border border-rose-950/80 bg-slate-950/80 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+              <span class="text-rose-400 font-mono text-xs font-bold flex items-center gap-1.5">
+                <span>❌</span> GELENEKSEL YATAY SİLOLAR
+              </span>
+              <span class="text-[10px] bg-rose-950/80 text-rose-300 px-1.5 py-0.5 rounded">High Blast Radius</span>
+            </div>
+
+            <!-- Horizontal Silo Diagram -->
+            <div class="space-y-1.5 text-xs font-mono mb-4">
+              <div class="p-2 rounded bg-slate-900 border border-slate-800 text-slate-300 text-center">
+                🖥️ UI Katmanı (Tüm Sayfalar)
+              </div>
+              <div class="p-2 rounded bg-slate-900 border border-slate-800 text-slate-300 text-center">
+                🌐 API & Route Katmanı (Tüm Endpoint'ler)
+              </div>
+              <div class="p-2 rounded bg-slate-900 border border-slate-800 text-slate-300 text-center">
+                🧠 İş Mantığı / Servisler (Tüm Kurallar)
+              </div>
+              <div class="p-2 rounded bg-slate-900 border border-slate-800 text-slate-300 text-center">
+                🗄️ Veritabanı & Şemalar (Tüm Tablolar)
+              </div>
+            </div>
+
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              <strong>Neden Çöker?</strong> Model bir katmanı yazarken diğerlerini tahmin etmek zorundadır. Hiçbir ara durum tek başına test edilemez ("Big Bang Entegrasyonu"). Context penceresi şişer.
+            </p>
+          </div>
+          <div class="text-[10px] text-rose-400 font-mono mt-3 pt-2 border-t border-slate-900">
+            Kural: Tek bir katmana sıkışmış yatay bilet açmak YASAKTIR!
+          </div>
+        </div>
+
+        <!-- Right: Vertical Tracer Bullets -->
+        <div class="md:col-span-7 glass-panel p-4 rounded-xl border border-cyan-500/40 bg-slate-950/90 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+              <span class="text-cyan-300 font-mono text-xs font-bold flex items-center gap-1.5">
+                <span>✅</span> MATT POCOCK: DİKEY DİLİMLER (TRACER BULLETS)
+              </span>
+              <span class="text-[10px] bg-cyan-950 text-cyan-300 px-1.5 py-0.5 rounded border border-cyan-800">Demoable & Testable</span>
+            </div>
+
+            <!-- Vertical Slices Visual Grid -->
+            <div class="grid grid-cols-3 gap-2.5 mb-4 text-center font-mono text-[11px]">
+              
+              <!-- Slice 1 -->
+              <div class="p-2.5 rounded-lg bg-slate-900/90 border border-cyan-500/50 flex flex-col justify-between hover:bg-slate-900 transition">
+                <div class="text-[10px] text-cyan-400 font-bold mb-1">DİLİM #1</div>
+                <div class="text-[11px] font-semibold text-white mb-2 leading-tight">Şifre Sıfırlama İsteme</div>
+                <div class="space-y-1 text-[9px] text-slate-400 text-left bg-slate-950 p-1.5 rounded">
+                  <div>✓ UI Formu</div>
+                  <div>✓ POST /auth/reset</div>
+                  <div>✓ Token Servisi</div>
+                  <div>✓ ResetTokens DB</div>
+                  <div class="text-cyan-400 font-bold">✓ E2E/Unit Test</div>
+                </div>
+              </div>
+
+              <!-- Slice 2 -->
+              <div class="p-2.5 rounded-lg bg-slate-900/90 border border-indigo-500/50 flex flex-col justify-between hover:bg-slate-900 transition">
+                <div class="text-[10px] text-indigo-400 font-bold mb-1">DİLİM #2</div>
+                <div class="text-[11px] font-semibold text-white mb-2 leading-tight">Yeni Şifre Kaydetme</div>
+                <div class="space-y-1 text-[9px] text-slate-400 text-left bg-slate-950 p-1.5 rounded">
+                  <div>✓ Şifre Ekranı</div>
+                  <div>✓ PATCH /auth/reset</div>
+                  <div>✓ Hash Servisi</div>
+                  <div>✓ Users Update</div>
+                  <div class="text-indigo-400 font-bold">✓ E2E/Unit Test</div>
+                </div>
+              </div>
+
+              <!-- Slice 3 -->
+              <div class="p-2.5 rounded-lg bg-slate-900/90 border border-purple-500/50 flex flex-col justify-between hover:bg-slate-900 transition">
+                <div class="text-[10px] text-purple-400 font-bold mb-1">DİLİM #3</div>
+                <div class="text-[11px] font-semibold text-white mb-2 leading-tight">Süresi Dolan Token</div>
+                <div class="space-y-1 text-[9px] text-slate-400 text-left bg-slate-950 p-1.5 rounded">
+                  <div>✓ Hata Toasti</div>
+                  <div>✓ 401 Expiry Handler</div>
+                  <div>✓ Redirect Logic</div>
+                  <div>✓ Log Audit</div>
+                  <div class="text-purple-400 font-bold">✓ Expiry Test</div>
+                </div>
+              </div>
+
+            </div>
+
+            <p class="text-[11px] text-slate-300 leading-relaxed">
+              <strong>Neden Çalışır?</strong> Her dilim, tabandan tavana kadar tek bir dar işi çözer. Her adım tek başına derlenir, tek başına yeşile döner ve <strong>Smart Zone (&lt;180k token)</strong> içinde tamamlanır.
+            </p>
+          </div>
+          
+          <div class="text-[10px] text-cyan-400 font-mono mt-3 pt-2 border-t border-slate-900 flex justify-between">
+            <span>Tek oturum, tek dikey dilim, tek context penceresi.</span>
+            <span class="font-bold">exit 0</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5: FROM FOG TO TICKET DAG (NEW) ================= -->
+    <section class="slide flex-col max-w-5xl w-full" data-slide="5" data-notes="Peki bu dikey dilimler nasıl biletleniyor? /ask-matt akışı burada devreye giriyor. Önce zihinsel sis /grilling ile sorgulanır. Cevaplar /to-spec ile numaralı kabul kriterlerine [AC-01, AC-02] dökülür. Ardından /to-tickets bu kriterleri dikey tracer bullet biletlerine ve bağımlılık grafına (DAG) dönüştürür. Burada iki altın kuralımız var: Zero-Orphan kuralı ile hiçbir kabul kriteri açıkta kalmaz; ve her bilet kimi blokladığını açıkça ilan eder.">
+      <div class="text-indigo-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">BİLETLENME MİMARİSİ</div>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Ask-Matt: Sis'ten Biletleme Grafına (DAG)</h2>
+      <p class="text-sm text-slate-400 mb-5">Zihinsel sisi dağıtıp bağımlılık grafıyla (Directed Acyclic Graph) yürütmeye bağlama hattı.</p>
+
+      <!-- Step Sequence Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3.5 w-full mb-5">
+        
+        <!-- Step 1 -->
+        <div class="glass-panel p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-1.5 text-cyan-400 font-mono text-xs font-bold mb-2">
+              <span class="w-5 h-5 rounded-full bg-cyan-950 border border-cyan-800 flex items-center justify-center text-[10px]">1</span>
+              <span>ZİHİNSEL SİS (FOG)</span>
+            </div>
+            <div class="text-xs font-semibold text-slate-200 mb-1"><code>/grill-with-docs</code></div>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              İnsan mimar ile acımasız mülakat yapılır. Token ömrü ne kadar? Magic link mi OTP mi? Açık sorular tüketilir.
+            </p>
+          </div>
+          <div class="mt-2 text-[10px] font-mono text-cyan-400 bg-slate-900 p-1.5 rounded">
+            frontier-axi add
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="glass-panel p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-1.5 text-indigo-400 font-mono text-xs font-bold mb-2">
+              <span class="w-5 h-5 rounded-full bg-indigo-950 border border-indigo-800 flex items-center justify-center text-[10px]">2</span>
+              <span>ŞARTNAME (SPEC)</span>
+            </div>
+            <div class="text-xs font-semibold text-slate-200 mb-1"><code>/to-spec</code></div>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Sözlü uzlaşma, numaralı Kabul Kriterlerine (Acceptance Criteria) dönüştürülür: <code>[AC-01]</code>, <code>[AC-02]</code>.
+            </p>
+          </div>
+          <div class="mt-2 text-[10px] font-mono text-indigo-400 bg-slate-900 p-1.5 rounded">
+            specs/auth-reset.md
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="glass-panel p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-1.5 text-purple-400 font-mono text-xs font-bold mb-2">
+              <span class="w-5 h-5 rounded-full bg-purple-950 border border-purple-800 flex items-center justify-center text-[10px]">3</span>
+              <span>DİKEY BİLETLER</span>
+            </div>
+            <div class="text-xs font-semibold text-slate-200 mb-1"><code>/to-tickets</code></div>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Kriterler dikey dilimlere bölünür. Her bilet kimi blokladığını (<code>blocked_by</code>) açıkça deklare eder.
+            </p>
+          </div>
+          <div class="mt-2 text-[10px] font-mono text-purple-400 bg-slate-900 p-1.5 rounded">
+            tasks-axi ready
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="glass-panel p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-1.5 text-emerald-400 font-mono text-xs font-bold mb-2">
+              <span class="w-5 h-5 rounded-full bg-emerald-950 border border-emerald-800 flex items-center justify-center text-[10px]">4</span>
+              <span>YÜRÜTME & İZLEME</span>
+            </div>
+            <div class="text-xs font-semibold text-slate-200 mb-1"><code>/implement</code> (TDD)</div>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Maid biletteki kriterler için önce kırmızı testi yazar, yeşile çevirir ve <code>no-mistakes</code> kapısından geçer.
+            </p>
+          </div>
+          <div class="mt-2 text-[10px] font-mono text-emerald-400 bg-slate-900 p-1.5 rounded">
+            tasks-axi done &lt;id&gt;
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Ticket Anatomisi & Two Invariants -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 w-full">
+        <!-- Ticket Specimen -->
+        <div class="md:col-span-6 rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs shadow-inner">
+          <div class="text-slate-500 text-[10px] mb-1.5 border-b border-slate-900 pb-1 flex justify-between">
+            <span>DİKEY BİLET ANATOMİSİ (.tasks.toml)</span>
+            <span class="text-emerald-400 font-bold">READY</span>
+          </div>
+          <div class="text-slate-300 text-[11px] space-y-0.5 leading-relaxed">
+            <div><span class="text-indigo-400">[tasks.T-01]</span></div>
+            <div>title = <span class="text-emerald-300">"Şifre sıfırlama talebi & Token üretimi"</span></div>
+            <div>spec_ref = <span class="text-cyan-300">"specs/auth-reset.md"</span></div>
+            <div>covers = [<span class="text-amber-300">"AC-01"</span>, <span class="text-amber-300">"AC-02"</span>] <span class="text-slate-500 text-[10px]"># Kriter eşleşmesi</span></div>
+            <div>blocked_by = [] <span class="text-slate-500 text-[10px]"># Bağımlılık yok, hemen başla</span></div>
+            <div>status = <span class="text-emerald-400">"ready"</span></div>
+          </div>
+        </div>
+
+        <!-- 2 Invariant Rules -->
+        <div class="md:col-span-6 space-y-2 flex flex-col justify-center text-xs">
+          <div class="glass-panel p-2.5 rounded-lg border-l-2 border-l-amber-400">
+            <span class="font-bold text-amber-300 font-mono text-[11px]">1. Zero-Orphan Kuralı:</span>
+            <p class="text-[11px] text-slate-300 mt-0.5">
+              Şartnamedeki hiçbir <code>[AC-xx]</code> kriteri açıkta kalamaz. Tüm kriterler biletlere %100 dağıtılmalıdır.
+            </p>
+          </div>
+          <div class="glass-panel p-2.5 rounded-lg border-l-2 border-l-cyan-400">
+            <span class="font-bold text-cyan-300 font-mono text-[11px]">2. Blocking Edges (DAG):</span>
+            <p class="text-[11px] text-slate-300 mt-0.5">
+              Her bilet yalnızca kendisini doğrudan engelleyen biletleri bekler. Bloke iş bittiğinde sonraki bilet otomatik olarak <code>tasks-axi ready</code> durumuna geçer.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 6: AXI ECOSYSTEM ================= -->
+    <section class="slide flex-col max-w-5xl w-full" data-slide="6" data-notes="Peki bu süreci nasıl takip ediyoruz? Ağır veritabanlarıyla veya token yutan SaaS araçlarıyla değil; Kun Chen'in L8 sistem mühendisliği prensipleriyle geliştirilen Axi ekosistemi ile. frontier-axi ile fikirleri toplarız, tasks-axi ile dikey biletleri yönetiriz, no-mistakes ile doğrularız. GitHub içinse ekstra wrapper yerine resmi gh CLI aracını kullanıyoruz.">
+      <div class="text-indigo-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">SİSTEM MÜHENDİSLİĞİ</div>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Axi Ekosistemi: Deterministik CLI Gücü</h2>
+      <p class="text-sm text-slate-400 mb-6">Kun Chen (L8 Principal) felsefesi: Sıfır API maliyeti, Git ile uyumlu yerel TOML/Markdown SSOT.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-full mb-6">
+        <!-- frontier-axi -->
+        <div class="glass-panel p-4 rounded-xl border border-slate-800">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-cyan-400 font-mono text-xs font-bold">frontier-axi</span>
+            <span class="text-[10px] bg-cyan-950 text-cyan-300 px-2 py-0.5 rounded border border-cyan-800">Upstream Fog</span>
+          </div>
+          <h4 class="text-sm font-semibold text-slate-100 mb-1">Zihinsel Sis Yönetimi</h4>
+          <p class="text-xs text-slate-400 leading-relaxed mb-3">
+            Pişmemiş fikirler, mimari kararlar ve açık sorular <code>.frontier.toml</code> dosyasında tutulur. Belirsiz işlerin görev kuyruğuna sızmasını engeller.
+          </p>
+          <div class="text-[10px] font-mono text-slate-300 bg-slate-900 p-2 rounded">
+            $ frontier-axi question add<br>
+            $ frontier-axi promote &lt;id&gt;
+          </div>
+        </div>
+
+        <!-- tasks-axi -->
+        <div class="glass-panel p-4 rounded-xl border border-slate-800">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-indigo-400 font-mono text-xs font-bold">tasks-axi</span>
+            <span class="text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded border border-indigo-800">Downstream Vertical</span>
+          </div>
+          <h4 class="text-sm font-semibold text-slate-100 mb-1">Deterministik Görevler</h4>
+          <p class="text-xs text-slate-400 leading-relaxed mb-3">
+            Yalnızca şartnamesi ve kabul kriterleri (AC) netleşmiş dikey işler <code>.tasks.toml</code> kuyruğuna girer. Ajanların keyfi TODO üretmesini engeller.
+          </p>
+          <div class="text-[10px] font-mono text-slate-300 bg-slate-900 p-2 rounded">
+            $ tasks-axi ready<br>
+            $ tasks-axi done &lt;id&gt;
+          </div>
+        </div>
+
+        <!-- no-mistakes -->
+        <div class="glass-panel p-4 rounded-xl border border-slate-800">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-emerald-400 font-mono text-xs font-bold">no-mistakes</span>
+            <span class="text-[10px] bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded border border-emerald-800">Verification Gate</span>
+          </div>
+          <h4 class="text-sm font-semibold text-slate-100 mb-1">Tavizsiz Bekçi</h4>
+          <p class="text-xs text-slate-400 leading-relaxed mb-3">
+            Commit ve PR öncesi test tampering denetimi, linter, tip kontrolü ve test koşumu yapar. Sıfır hatayla çıkış (<code>exit 0</code>) zorunludur.
+          </p>
+          <div class="text-[10px] font-mono text-slate-300 bg-slate-900 p-2 rounded">
+            $ no-mistakes axi run --skip ci
+          </div>
+        </div>
+      </div>
+
+      <!-- GitHub note -->
+      <div class="w-full glass-panel p-3.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-3">
+          <span class="text-base">🐙</span>
+          <span class="text-slate-300"><strong>GitHub Tercihi:</strong> Ekstra wrapper yerine doğrudan resmi <strong>GitHub CLI (<code class="text-cyan-400">gh</code>)</strong> kullanıyoruz.</span>
+        </div>
+        <code class="text-[11px] bg-slate-900 text-indigo-300 px-2.5 py-1 rounded border border-slate-800">gh pr checks --watch</code>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 7: NO-MISTAKES DEEP DIVE ================= -->
+    <section class="slide flex-col max-w-5xl w-full" data-slide="7" data-notes="Peki no-mistakes nedir ve tam olarak ne yapar? no-mistakes, ajanların önüne koyduğumuz tavizsiz bir doğrulama bekçisidir. Ajan testleri gizlice değiştirdi mi (anti-tampering), tip hatası bıraktı mı, linter'ı bozdu mu? Bunları commit öncesinde deterministik olarak doğrular. Eğer no-mistakes onay vermezse, kod repoya giremez.">
+      <div class="text-emerald-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">TAVİZSİZ DOĞRULAMA</div>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">"no-mistakes" Nedir ve Ne Yapar?</h2>
+      <p class="text-sm text-slate-400 mb-6">Ajanın "Halledildi patron!" demesine değil, deterministik kanıtlara güvenin.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 w-full mb-6">
+        <div class="glass-panel p-4 rounded-xl border border-slate-800 flex items-start gap-3">
+          <div class="p-2 rounded-lg bg-rose-950/80 text-rose-400 border border-rose-800/80 text-lg">🛡️</div>
+          <div>
+            <h3 class="text-sm font-semibold text-slate-100 mb-1">Anti-Tampering Denetimi</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Test ve spesifikasyon dosyalarındaki yetkisiz satır silmelerini, gevşetilen assertion'ları tespit eder. Ajanın testi manipüle etmesini engeller.
+            </p>
+          </div>
+        </div>
+
+        <div class="glass-panel p-4 rounded-xl border border-slate-800 flex items-start gap-3">
+          <div class="p-2 rounded-lg bg-cyan-950/80 text-cyan-400 border border-cyan-800/80 text-lg">🔍</div>
+          <div>
+            <h3 class="text-sm font-semibold text-slate-100 mb-1">Katı Tip & Lint Kapısı</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Projenin TypeScript, Rust veya Python derleyicisini çalıştırır. <code>any</code> kaçamaklarını veya atlanmış tip hatalarını anında yakalar.
+            </p>
+          </div>
+        </div>
+
+        <div class="glass-panel p-4 rounded-xl border border-slate-800 flex items-start gap-3">
+          <div class="p-2 rounded-lg bg-indigo-950/80 text-indigo-400 border border-indigo-800/80 text-lg">⚡</div>
+          <div>
+            <h3 class="text-sm font-semibold text-slate-100 mb-1">Tier 1: Mandatory Local Gate</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Her bilet bitiminde <code>make check</code> (lint + types + tests) komutunun temiz bir <code>exit 0</code> verdiğini zorunlu kılar.
+            </p>
+          </div>
+        </div>
+
+        <div class="glass-panel p-4 rounded-xl border border-slate-800 flex items-start gap-3">
+          <div class="p-2 rounded-lg bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 text-lg">🔒</div>
+          <div>
+            <h3 class="text-sm font-semibold text-slate-100 mb-1">Diff & Invariant Güvenliği</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Kapsam dışı dosya değişikliklerini, gizli anahtarları veya yetkisiz mimari kaymaları analiz eder; risk yüksekse birleşmeyi (merge) engeller.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Golden Rule Banner -->
+      <div class="w-full rounded-xl bg-gradient-to-r from-emerald-950/70 via-slate-900 to-indigo-950/70 p-4 border border-emerald-500/30 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">⚖️</span>
+          <div>
+            <div class="text-xs font-mono font-bold text-emerald-400 uppercase">DETERMİNİSTİK ALTIN KURAL</div>
+            <div class="text-sm font-medium text-slate-200">Eğer <code>no-mistakes</code> geçmiyorsa, ajanın hiçbir iddiasının önemi yoktur.</div>
+          </div>
+        </div>
+        <div class="px-3 py-1 rounded bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/40">
+          PASSED or REJECTED
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 8: ESTATE HIERARCHY ================= -->
+    <section class="slide flex-col max-w-5xl w-full" data-slide="8" data-notes="İşte tüm bunlar bir malikane kadrosu gibi birleşiyor: En tepede Baş Mimar olarak siz varsınız ve en kritik rolünüz START BUTTON olmaktır. Steward çoklu projeleri yönetir, Butler tek bir reponun mimarisine bakar ama asla kendisi kod yazmaz. Maid ise izole bir worktree'de testleri yeşile çeviren düşük maliyetli ameledir.">
+      <div class="text-purple-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">ORGANİZASYON</div>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Malikane Hiyerarşisi (The Estate Staff)</h2>
+      <p class="text-sm text-slate-400 mb-6">Net sorumluluk sınırları: Kim mimar, kim amele, kim denetçi?</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
+        <!-- Human -->
+        <div class="glass-panel p-4 rounded-xl border border-amber-500/40 flex flex-col justify-between">
+          <div>
+            <div class="text-2xl mb-2">👑</div>
+            <div class="text-amber-400 font-mono text-xs font-bold">MASTER (HUMAN)</div>
+            <h3 class="text-sm font-semibold text-white mt-1 mb-2">Baş Mimar & START BUTTON</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              Stratejik vizyon, grilling, kota ve bütçe bekçisi. Ajanların kontrolsüz döngülere girmesini engelleyen yürütme onay merci.
+            </p>
+          </div>
+          <div class="bg-amber-950/40 text-amber-300 text-[10px] font-mono p-1.5 rounded border border-amber-900">
+            Decision Authority
+          </div>
+        </div>
+
+        <!-- Steward -->
+        <div class="glass-panel p-4 rounded-xl border border-cyan-500/40 flex flex-col justify-between">
+          <div>
+            <div class="text-2xl mb-2">🎩</div>
+            <div class="text-cyan-400 font-mono text-xs font-bold">/steward</div>
+            <h3 class="text-sm font-semibold text-white mt-1 mb-2">Portföy Şefi</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              Tüm repoları koordine eder (<code>projects.json</code>). İnsanı terminal gürültüsünden ve context çürümesinden izole eder.
+            </p>
+          </div>
+          <div class="bg-cyan-950/40 text-cyan-300 text-[10px] font-mono p-1.5 rounded border border-cyan-900">
+            Cross-Repo Fleet
+          </div>
+        </div>
+
+        <!-- Butler -->
+        <div class="glass-panel p-4 rounded-xl border border-indigo-500/40 flex flex-col justify-between">
+          <div>
+            <div class="text-2xl mb-2">🎩</div>
+            <div class="text-indigo-400 font-mono text-xs font-bold">/butler</div>
+            <h3 class="text-sm font-semibold text-white mt-1 mb-2">Proje Kahyası</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              Tek bir reponun sahibi (High Reasoning). Şartname yazar, görev dağıtır, iki eksenli kod inceler. <strong>Asla kendisi kod yazmaz!</strong>
+            </p>
+          </div>
+          <div class="bg-indigo-950/40 text-indigo-300 text-[10px] font-mono p-1.5 rounded border border-indigo-900">
+            Zero-Self-Code
+          </div>
+        </div>
+
+        <!-- Maid -->
+        <div class="glass-panel p-4 rounded-xl border border-emerald-500/40 flex flex-col justify-between">
+          <div>
+            <div class="text-2xl mb-2">🧹</div>
+            <div class="text-emerald-400 font-mono text-xs font-bold">maid</div>
+            <h3 class="text-sm font-semibold text-white mt-1 mb-2">Uzman Amele (CLI)</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              Düşük maliyetli alt-süreç (<code>agy -p</code>). İzole worktree'de TDD ile kırmızı testi yeşile çevirir, RAM'den temizce çıkar (<code>exit 0</code>).
+            </p>
+          </div>
+          <div class="bg-emerald-950/40 text-emerald-300 text-[10px] font-mono p-1.5 rounded border border-emerald-900">
+            Frugal Implementer
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 9: WORKFLOW ================= -->
+    <section class="slide flex-col max-w-5xl w-full" data-slide="9" data-notes="Uçtan uca iş akışında her şey adım adımdır. İnsan stratejiyi belirler, Steward handoff üretir, İnsan START BUTTON'a basar. Butler biletleri çıkarır, Maid TDD ile uygular. Ardından no-mistakes kapısından geçer, Butler iki eksenli incelemeyi tamamlar ve en son GitHub Actions CI yeşile döndüğünde insan nihai merge onayını verir.">
+      <div class="text-cyan-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">UÇTAN UCA AKIŞ</div>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Uçtan Uca Mühendislik Akışı</h2>
+      <p class="text-sm text-slate-400 mb-6">Deterministik adımlarla hatasız teslimat hattı.</p>
+
+      <div class="glass-panel p-6 rounded-2xl border border-slate-800 w-full">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3 relative">
+          
+          <div class="flex flex-col items-center text-center p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <span class="w-8 h-8 rounded-full bg-amber-950 text-amber-400 flex items-center justify-center font-bold text-xs mb-2">1</span>
+            <div class="text-xs font-semibold text-slate-200">Vizyon & Grilling</div>
+            <div class="text-[11px] text-slate-400 mt-1">İnsan Mimar & Steward açık soruları tüketir.</div>
+          </div>
+
+          <div class="flex flex-col items-center text-center p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <span class="w-8 h-8 rounded-full bg-indigo-950 text-indigo-400 flex items-center justify-center font-bold text-xs mb-2">2</span>
+            <div class="text-xs font-semibold text-slate-200">START BUTTON</div>
+            <div class="text-[11px] text-slate-400 mt-1"><code>handoff.md</code> onaylanır, Butler devralır.</div>
+          </div>
+
+          <div class="flex flex-col items-center text-center p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <span class="w-8 h-8 rounded-full bg-cyan-950 text-cyan-400 flex items-center justify-center font-bold text-xs mb-2">3</span>
+            <div class="text-xs font-semibold text-slate-200">Dikey Biletler & TDD</div>
+            <div class="text-[11px] text-slate-400 mt-1">Maid <code>agy -p</code> ile izole çalışır (Red ➔ Green).</div>
+          </div>
+
+          <div class="flex flex-col items-center text-center p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <span class="w-8 h-8 rounded-full bg-emerald-950 text-emerald-400 flex items-center justify-center font-bold text-xs mb-2">4</span>
+            <div class="text-xs font-semibold text-slate-200">no-mistakes Gate</div>
+            <div class="text-[11px] text-slate-400 mt-1">Anti-tampering + <code>make check</code> (exit 0).</div>
+          </div>
+
+          <div class="flex flex-col items-center text-center p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <span class="w-8 h-8 rounded-full bg-purple-950 text-purple-400 flex items-center justify-center font-bold text-xs mb-2">5</span>
+            <div class="text-xs font-semibold text-slate-200">CI & Final Merge</div>
+            <div class="text-[11px] text-slate-400 mt-1">Butler Code Review, <code>gh pr checks</code> & İnsan onayı.</div>
+          </div>
+
+        </div>
+
+        <div class="mt-6 pt-5 border-t border-slate-800/80 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-3 font-mono">
+          <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-cyan-400"></span> Upstream: frontier-axi</span>
+          <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-400"></span> Downstream: tasks-axi</span>
+          <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Gate: no-mistakes</span>
+          <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-purple-400"></span> CI: gh pr checks</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 10: DISCLAIMER & WALKTHROUGH ================= -->
+    <section class="slide flex-col max-w-5xl w-full" data-slide="10" data-notes="Şimdi canlı uygulamaya geçmeden önce dürüst bir sorumluluk reddinde bulunalım: Code-Manor sihirli bir peri değneği değildir. Kötü bir mimariyi tek başına kurtaramaz. Şimdi slaytları kapatıyorum. Yarım kalmış bir projeyi canlı olarak açacağız ve her gün masamda ne yapıyorsam onu yapacağım. Doğaçlama bir şekilde devralıp Butler ve Maid ile CI'a kadar yürüteceğiz.">
+      <div class="text-amber-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">GERÇEKÇİ YAKLAŞIM</div>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">Sorumluluk Reddi & Canlı Walkthrough</h2>
+      <p class="text-sm text-slate-400 mb-6">Sihir vaat etmiyoruz; disiplinli bir mühendislik işletim sistemi sunuyoruz.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+        <!-- Disclaimer Card -->
+        <div class="glass-panel p-5 rounded-2xl border border-amber-500/30 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-3">
+              <span>⚠️</span> Sorumluluk Red Beyanı (Disclaimer)
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              Code-Manor, 10 yıllık spagetti monolitleri bir tuşa basarak mikrosersivlere bölen sihirli bir peri değneği değildir.
+            </p>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Eğer yazılım tasarımını bilmiyorsanız, etki alanınızı (domain) tanımlayamıyorsanız ve sınırları çizemiyorsanız hiçbir yapay zeka sistemi sizi kurtaramaz. Code-Manor, ancak disiplinli bir mühendisin elinde bir güç çarpanına dönüşür.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-amber-500/20 text-[11px] font-mono text-amber-300">
+            No Magic. Pure Discipline.
+          </div>
+        </div>
+
+        <!-- Live Walkthrough Transition Card -->
+        <div class="glass-panel p-5 rounded-2xl border border-cyan-500/40 flex flex-col justify-between bg-gradient-to-br from-slate-900 via-slate-950 to-cyan-950/40">
+          <div>
+            <div class="flex items-center gap-2 text-cyan-400 font-bold text-sm mb-3">
+              <span>🎬</span> Canlı Walkthrough: Doğaçlama Devralma
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              Kurgu veya sahte demo senaryoları yok. Yarım kalmış gerçek bir projeyi devralıyoruz:
+            </p>
+            <ul class="text-xs text-slate-400 space-y-2 list-disc list-inside">
+              <li>Mevcut frontier ve task durumunu okuma (<code>tasks-axi ready</code>)</li>
+              <li><code>/butler</code> ile devralma ve <code>BASE_SHA</code> sabitleme</li>
+              <li>Maid'in TDD ile kırmızı testi yeşile çevirmesi</li>
+              <li><code>no-mistakes</code> kapısı ve <code>gh pr checks --watch</code></li>
+            </ul>
+          </div>
+          <div class="mt-4 pt-3 border-t border-cyan-500/20 flex items-center justify-between text-[11px] font-mono text-cyan-300">
+            <span>Terminal Moduna Geçiliyor...</span>
+            <span class="animate-pulse font-bold">● LIVE DEMO</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Presenter Notes Panel (Toggled via 'N' key) -->
+  <div id="notes-panel" class="hidden fixed bottom-14 left-1/2 -translate-x-1/2 w-full max-w-4xl glass-panel p-4 rounded-xl border border-indigo-500/30 z-40 text-xs shadow-2xl">
+    <div class="flex items-center justify-between mb-2 text-[11px] font-mono text-indigo-400 border-b border-slate-800 pb-1">
+      <span class="font-bold flex items-center gap-1.5">🎙️ PRODÜKSİYON SESLENDİRME NOTLARI (SCRIPT)</span>
+      <span class="text-slate-500">[N] tuşu ile gizle/aç</span>
+    </div>
+    <div id="notes-content" class="text-slate-300 leading-relaxed font-normal text-xs max-h-32 overflow-y-auto">
+      <!-- Injected via JS -->
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <footer class="w-full h-14 border-t border-slate-800/80 flex items-center justify-between px-8 z-40 bg-slate-950/80 backdrop-blur-md text-xs">
+    <div class="flex items-center gap-3 text-slate-400">
+      <span class="hidden md:inline text-[11px] font-mono text-slate-500">Klavye: ← / → / Boşluk: Geçiş | [F] Tam Ekran | [N] Konuşma Notları</span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button id="btn-notes" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 flex items-center gap-1.5 transition text-xs" title="Konuşmacı Notları (N)">
+        <span>🎙️</span> <span class="hidden sm:inline">Notlar</span>
+      </button>
+
+      <button id="btn-prev" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition text-xs flex items-center gap-1" title="Önceki Slayt (Sol Ok)">
+        <span>←</span> <span class="hidden sm:inline">Önceki</span>
+      </button>
+
+      <button id="btn-next" class="px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold transition text-xs flex items-center gap-1 shadow-sm" title="Sonraki Slayt (Sağ Ok veya Boşluk)">
+        <span>Sonraki</span> <span>→</span>
+      </button>
+
+      <button id="btn-fullscreen" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 transition text-xs" title="Tam Ekran (F)">
+        ⛶
+      </button>
+    </div>
+  </footer>
+
+  <!-- Slide Logic Script -->
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 1;
+
+    const progressBar = document.getElementById('progress-bar');
+    const slideNumber = document.getElementById('slide-number');
+    const notesPanel = document.getElementById('notes-panel');
+    const notesContent = document.getElementById('notes-content');
+    const btnNotes = document.getElementById('btn-notes');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const btnFullscreen = document.getElementById('btn-fullscreen');
+
+    function showSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      slides.forEach((s, idx) => {
+        if (idx + 1 === currentSlide) {
+          s.classList.add('active');
+          const notes = s.getAttribute('data-notes') || 'Bu slayt için özel not bulunmuyor.';
+          notesContent.textContent = notes;
+        } else {
+          s.classList.remove('active');
+        }
+      });
+
+      // Update counter and progress bar
+      slideNumber.textContent = `${currentSlide} / ${totalSlides}`;
+      const percentage = ((currentSlide - 1) / (totalSlides - 1)) * 100;
+      progressBar.style.width = `${percentage}%`;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    function toggleNotes() {
+      notesPanel.classList.toggle('hidden');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.key === 'n' || e.key === 'N') {
+        toggleNotes();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        showSlide(1);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        showSlide(totalSlides);
+      }
+    });
+
+    btnPrev.addEventListener('click', prevSlide);
+    btnNext.addEventListener('click', nextSlide);
+    btnNotes.addEventListener('click', toggleNotes);
+    btnFullscreen.addEventListener('click', toggleFullscreen);
+
+    // Initial setup
+    showSlide(1);
+  </script>
+</body>
+</html>

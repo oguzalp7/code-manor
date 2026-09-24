@@ -52,10 +52,11 @@
    - If an agent encounters ambiguity, it uses targeted `grep` on that specific conversation's `transcript.jsonl` rather than bloating the active window.
 
 4. **DETERMINISTIC VERIFICATION GATES (Two-Tier Gate: Hermetic Local make check + Project Policy):**
-   - **Tier 1: Mandatory Hermetic Local Gate (`make check` — Non-Negotiable):**
-     - Before completing any ticket, closing `tasks-axi`, or running `no-mistakes`, the worker (`maid`) MUST run the repository's canonical check:
-       `make check` (or language equivalent: lint + typecheck + hermetic unit tests) and verify it exits 0.
-     - **Hermeticity Invariant:** `make check` MUST be completely hermetic (zero external dependencies, zero Docker/PostgreSQL/Redis daemons, zero network). It must only run fast in-memory unit tests (`test:unit`). Integration or database-dependent tests belong exclusively in `make test:integration` or CI.
+   - **Tier 1: Mandatory Hermetic Local Gate (`make check` — Git-Status-Aware Sync Protocol):**
+     - **Pre-Flight Integrity:** If the git working tree is clean and synchronized with origin (`git status --porcelain` empty), redundant up-front `make check` runs are skipped. If dirty prior to dispatch, `make check` must verify baseline integrity before work begins.
+     - **Idle/Exit Sync Trigger:** When Maid finishes a turn and becomes idle/exits, the driver checks `git status`. If git synchronization has been disrupted by code edits (`tests/` and `src/`), `make check` MUST run synchronously at the OS level (hermetic: lint + typecheck + in-memory unit tests; zero external DB/network).
+     - **Pass & Push:** If `make check` exits 0, the driver runs the ticket gate command (`no-mistakes axi run --skip ci`), commits, and pushes verified changes to GitHub (`git push`).
+     - **Fail & Iterate:** If `make check` fails, the failure trace is fed back to Maid via `agy --continue` to fix in the next turn without deleting assertions.
      - Never push code that breaks local linting or static typing.
    - **Tier 2: Policy-Gated Outer & CI Verification:**
      - Each repository declares a `policy` in `projects.json` (`yolo`, `staged`, or `strict`):
@@ -71,10 +72,11 @@
    - **Zero Orphan Criteria:** Decomposing into tickets requires 100% AC coverage. No ticket execution begins with orphaned criteria.
 
 6. **SINGLE-WORKER POOL & ANTI-ZOMBIE LIFECYCLE (3-Tier Traffic Light Context Gauge):**
-   - **Subprocess Worker Execution:** Butler executes Maid as a synchronous CLI subprocess via `agy -p --conversation "$MAID_CONV_ID"` using declarative parameters from `routing.json`. The process exits cleanly at OS level upon return (`exit 0`). Zero dangling background daemons.
+   - **Subprocess Worker Execution:** Butler executes Maid via the autonomous multi-turn loop driver (`bin/run_maid_loop.sh`) driving `agy` subprocesses with declarative parameters from `routing.json` (`model: gemini-3.8-flash-low`, `effort: low`). The process exits cleanly at OS level upon completion (`exit 0`). Zero dangling background daemons.
+   - **In-Process Fallback Mode:** If `agy` CLI is unavailable, Butler falls back to native `invoke_subagent` strictly using **`Model: "flash_lite"`** (NOT `"flash"` or `"pro"`) to prevent reasoning token leaks and quota exhaustion.
    - **3-Tier Traffic Light Context Gauge:**
-     - 🟢 **Green Zone (0 – 180,000 tokens):** Smart execution zone. Butler preserves `$MAID_CONV_ID` warm across sequential tickets for prompt caching and momentum.
-     - 🟡 **Yellow Zone (180,000 – 250,000 tokens):** Graceful wrap-only zone. If crossed mid-ticket, do not kill; let Maid finish. At the ticket boundary, refuse new assignments and rotate `$MAID_CONV_ID` cleanly.
+     - 🟢 **Green Zone (0 – 180,000 tokens):** Smart execution zone. Butler preserves warm worker momentum across sequential tickets for prompt caching.
+     - 🟡 **Yellow Zone (180,000 – 250,000 tokens):** Graceful wrap-only zone. If crossed mid-ticket, do not kill; let Maid finish. At the ticket boundary, refuse new assignments and rotate the worker session cleanly.
      - 🔴 **Red Zone (> 250,000 tokens):** Dump Zone / Panic trigger. Indicates hallucination loop or stagnation. Butler immediately aborts the runaway process, salvages worktree diff, and initializes a fresh session with a distilled corrective instruction.
    - **Milestone Reaping:** Once all tickets in a milestone complete, Butler unsets and retires the worker session cleanly before initiating Two-Axis Code Review. Zero zombie subagents or database fragmentation permitted.
 
@@ -84,3 +86,14 @@
 
 8. **STEWARD-TO-BUTLER DISPATCH PAIR (`/steward-dispatch` & `/butler-takeover`):**
    - Eliminates the human errand-boy role. Steward runs `/steward-dispatch` upon settling a frontier; Butler activates `/butler-takeover` to ingest `handoff.md` and execute the milestone autonomously.
+
+9. **DETERMINISTIC WINDOWS / WSL COMMAND EXECUTION PROTOCOL:**
+   - **Environment Invariant:** On this Windows host, Linux repositories mounted on drive `Z:\...` or UNC `\\wsl.localhost\...` reside strictly inside the WSL2 Ubuntu distribution: `Ubuntu-24.04`.
+   - **Shell Invariant:** Antigravity runs in Windows PowerShell by default (`Shell: powershell`). Do NOT attempt to run Linux toolchains (`bash`, `make`, `npm`, `vitest`, `git`, `tasks-axi`, `frontier-axi`, `no-mistakes`) directly in PowerShell or bare `wsl`.
+   - **Canonical WSL Invocation Recipe:**
+     Always invoke Linux commands with the exact distribution flag and explicit directory navigation:
+     `wsl -d Ubuntu-24.04 -e bash -lc "cd <wsl-project-root> && <command>"`
+   - **Cwd Translation Safety (Zero Translate Error):**
+     When calling `run_command` from Windows to execute a `wsl` command, ALWAYS set the tool argument `Cwd` to a valid Windows native directory (such as `%USERPROFILE%` or the Windows drive root). NEVER set `Cwd` to a mapped network drive path like `Z:\...` or `\\wsl.localhost\...`, because the Windows WSL relay fails to translate mapped 9P network drives and throws `<3>WSL ERROR: CreateProcessParseCommon: Failed to translate Z:\...`.
+   - **Zero Probe Loop:**
+     Do NOT execute discovery commands like `wsl -l -v`, `Get-Command`, or guess distro names (`wsl -d Ubuntu`). The target distro is ALWAYS `Ubuntu-24.04`.

@@ -69,13 +69,13 @@ Before invoking any worker subagent:
    *This `$BASE_SHA` is the immutable fixed point for all subsequent code review and diff verification.*
 
 ### Step 2: Lean Worker Delegation (Context-Isolated)
-Spawn a lean worker subagent (`invoke_subagent` with `Model: "flash"`):
+Spawn a lean worker subagent (`invoke_subagent` with `Model: "flash_lite"`):
 - **Worker Prompt:** Pass **ONLY** the ticket specification (`## What to build` + `## Acceptance Criteria`) and relevant file boundaries.
 - **Strict Boundary:** The worker is strictly an implementer. Its sole job is:
   1. Test-driven development (`/tdd`) at pre-agreed seams.
   2. Achieving green tests without modifying existing tests (Guardrail #1).
   3. **Tier 1 Mandatory Local Gate:** Running `make check` (or project test/lint suite) and confirming `exit 0`.
-  4. Verifying the outer gate: `wsl -d Ubuntu-24.04 -u oguz /home/oguz/.no-mistakes/bin/no-mistakes axi run --skip ci` (runs local tests, types, lint, pushes commits and updates PR, skipping only broken remote CI).
+  4. Verifying the outer gate: `wsl -d Ubuntu-24.04 -e bash -lc "no-mistakes axi run --skip ci"` (runs local tests, types, lint, pushes commits and updates PR, skipping only broken remote CI).
 - **Worker Prohibition:** The worker subagent is **NEVER** asked to evaluate its own spec compliance or perform code review.
 
 ### Step 3: Supervised Execution & Outer Gate Confirmation

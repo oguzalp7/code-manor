@@ -1,0 +1,26 @@
+version = 1
+
+[[frontiers]]
+id = "driver-policy-awareness-and-circuit-breaker"
+title = "Surucunun Politika Bilincli Hale Getirilmesi ve Akilli Devre Kesici Mimarisi"
+state = "done"
+created = "2026-09-24"
+updated = "2026-09-24"
+closed = "2026-09-24"
+body = "Butler tarafindan calistirilan run_maid_loop.sh surucusunun projects.json icerisindeki repository politikalarindan (yolo, staged, strict) haberdar edilmesi; kapida olusabilecek altyapi/auth/syntax arizalarini (401, missing flag) kod hatasindan ayiran akilli bir devre kesici (circuit breaker) ile donatilmasi."
+
+[[frontiers.questions]]
+id = 1
+text = "Surucu repository politikasini (yolo, staged, strict) Butler uzerinden MAID_POLICY olarak mi almali, yoksa projects.json dogrudan mi sorgulanmali?"
+state = "resolved"
+created = "2026-09-24"
+answer = "Secenek A: Butler /butler-takeover sirasinda projects.json dosyasindan ilgili reponun politikasini (yolo, staged, strict) okuyup surucuye export MAID_POLICY olarak aktarir. Surucu bash scripti json parse etmeden MAID_POLICY uzerinden davranisini belirler."
+resolved_at = "2026-09-24"
+
+[[frontiers.questions]]
+id = 2
+text = "Gate komutu altyapi/yetkilendirme hatasi (401, network, syntax) verdiginde circuit breaker davranisi nasil olmali: Butler eskalasyonu mu, warning ile gecis mi?"
+state = "resolved"
+created = "2026-09-24"
+answer = "Secenek A: Gate komutunda altyapi/yetki/auth arizasi (401, token unsupported, missing flag) saptandiginda exit 2 ile dongu derhal kirilir, git diffi korunur ve Butler araciligiyla insana eskalasyon yapilir."
+resolved_at = "2026-09-24"
