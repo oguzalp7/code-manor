@@ -598,15 +598,21 @@ with tab1:
             st.caption(f"Loaded {len(events)} conversation events from `{transcript_file}`")
 
             # Feed Display Controls
-            col_ctrl1, col_ctrl2, col_ctrl3 = st.columns([1, 1, 2])
+            col_ctrl1, col_ctrl2, col_ctrl3 = st.columns([1.5, 1, 1])
             with col_ctrl1:
-                display_order = st.radio("Order", ["Newest First", "Oldest First"], horizontal=True)
+                display_order = st.radio(
+                    "Akış Yönü",
+                    ["Kronolojik (Eskiden Yeniye ⬇️)", "Ters Kronolojik (Yeniden Eskiye ⬆️)"],
+                    index=0,
+                    horizontal=True,
+                    help="Varsayılan: Konuşmanın başlangıcından sonuna doğru doğal akış (Yukarıdan aşağıya)."
+                )
             with col_ctrl2:
                 show_thinking = st.checkbox("Show Thinking Process", value=True)
             with col_ctrl3:
                 show_tool_outputs = st.checkbox("Show Tool Execution Outputs", value=True)
 
-            ordered_events = list(reversed(events)) if display_order == "Newest First" else events
+            ordered_events = events if "Eskiden Yeniye" in display_order else list(reversed(events))
 
             # Render Events Feed
             for ev in ordered_events:
