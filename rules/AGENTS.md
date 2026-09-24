@@ -80,9 +80,10 @@
      - 🔴 **Red Zone (> 250,000 tokens):** Dump Zone / Panic trigger. Indicates hallucination loop or stagnation. Butler immediately aborts the runaway process, salvages worktree diff, and initializes a fresh session with a distilled corrective instruction.
    - **Milestone Reaping:** Once all tickets in a milestone complete, Butler unsets and retires the worker session cleanly before initiating Two-Axis Code Review. Zero zombie subagents or database fragmentation permitted.
 
-7. **BUTLER ZERO-SELF-CODE BOUNDARY:**
-   - Butler is exclusively an architect, conductor, and reviewer. Butler is strictly prohibited from modifying code in `src/` or `tests/`.
-   - Butler's writing scope is restricted to `.memory/**`, `specs/**`, `.tasks.toml`, `CONTEXT.md`, and `handoff.md`.
+7. **BUTLER ZERO-SELF-CODE BOUNDARY (DUAL-LANE DISPATCH MODEL):**
+   - Butler is primarily an architect, conductor, and reviewer. Butler's default writing scope is restricted to `.memory/**`, `specs/**`, `.tasks.toml`, `CONTEXT.md`, and `handoff.md`.
+   - **Pragmatic Fast-Path Threshold Exception:** For minor, surgical tasks touching $\le 3$ files and $\le 50$ lines (e.g. trivial typo fixes, single-column schema/Zod adjustments, minor config or type export updates), Butler is authorized to edit files directly in-context, execute the fast targeted test (`npx vitest run <target>`), commit, and close the ticket without spinning up a Maid subprocess.
+   - **Deep-Path Enforcement:** Any task involving multi-file refactoring, architectural seams, migrations, or multi-step TDD MUST be delegated to Maid via `bin/run_maid_loop.sh`.
 
 8. **STEWARD-TO-BUTLER DISPATCH PAIR (`/steward-dispatch` & `/butler-takeover`):**
    - Eliminates the human errand-boy role. Steward runs `/steward-dispatch` upon settling a frontier; Butler activates `/butler-takeover` to ingest `handoff.md` and execute the milestone autonomously.

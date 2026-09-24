@@ -34,6 +34,13 @@ Break the work into **tracer bullet** tickets.
 - Any prefactoring should be done first
 - **Traceability Pointer:** Each ticket MUST declare `spec_ref: specs/<slug>.md` and its covered criteria: `covers: ["AC-01", ...]`
 - **Zero-Orphan Rule:** Every `[AC-xx]` from the originating spec must be covered across the tickets. No acceptance criteria may be left unassigned.
+- **5-Stage Outside-In Execution Ladder:** When slicing full-stack tracer bullets, order the implementation sequence top-down (London School TDD):
+  1. `[Frontend UI]`: Mock props/state + unit test (loading, empty, success, error render states).
+  2. `[API / Action]`: Server Action / Route + mock DB + unit test (Zod DTO validation).
+  3. `[DB Layer]`: Minimal schema / migration strictly required by Step 2.
+  4. `[DB Integration]`: Targeted test against local test database.
+  5. `[Frontend Wire-up]`: Connect UI to live Action and verify end-to-end slice.
+- **In-Memory Seam First Rule:** If external infrastructure (Job Queue, Redis, Vector DB, Scheduler) is needed, the tracer bullet MUST implement an in-memory stub first (`InMemory...`). Live external adapters are isolated follow-up tickets, preserving hermetic `make check`.
 
 </vertical-slice-rules>
 
@@ -78,8 +85,16 @@ Do NOT close or modify any parent issue.
 
 **Status:** ready-for-agent
 
+### Acceptance Criteria
 - [ ] Acceptance criterion 1
 - [ ] Acceptance criterion 2
+
+### Execution Ladder (Outside-In Order)
+1. [Frontend UI]: Mock props/state + unit test
+2. [API / Action]: Server Action / Route + mock DB + unit test
+3. [DB Layer]: Schema & migration
+4. [DB Integration]: API ◄► DB integration test
+5. [Frontend Wire-up]: UI ◄► Action wire-up test
 
 </local-ticket-template>
 
@@ -97,6 +112,14 @@ The end-to-end behaviour this ticket makes work, from the user's perspective, no
 
 - [ ] Criterion 1
 - [ ] Criterion 2
+
+## Execution Ladder (Outside-In Order)
+
+1. [Frontend UI]: Mock props/state + unit test
+2. [API / Action]: Server Action / Route + mock DB + unit test
+3. [DB Layer]: Schema & migration
+4. [DB Integration]: API ◄► DB integration test
+5. [Frontend Wire-up]: UI ◄► Action wire-up test
 
 ## Blocked by
 

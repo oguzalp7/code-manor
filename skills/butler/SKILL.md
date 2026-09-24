@@ -65,16 +65,19 @@ Butler NEVER drops the ball after delegating. Delegating to a `maid` subagent is
    BASE_SHA=$(git rev-parse HEAD)
    ```
 
-### Step 2: Maid Worker Execution (`run_maid_loop.sh` Driver Mode with Fallback)
+### Step 2: Dual-Lane Ticket Dispatch (Fast-Path vs. Deep-Path)
 > [!IMPORTANT]
-> **Zero-Self-Code:** Butler MUST NOT call `write_to_file` or `replace_file_content` on `src/` or `tests/`. Butler strictly orchestrates via `/butler-takeover`.
+> **Dual-Lane Dispatch Model:**
+> - **⚡ Fast-Path ($\le 3$ files, $\le 50$ lines):** For trivial surgical fixes, typo corrections, single-column Zod/schema adjustments, or config tweaks, Butler writes code directly in-context, runs the fast targeted test (`npx vitest run <target>`, ~1.8s), commits, and marks the ticket done. Zero Maid subprocess overhead.
+> - **🛡️ Deep-Path ($> 3$ files, Dikey Dilim / TDD):** Butler prepares the prompt with the 5-Stage Outside-In Execution Ladder, dispatches Maid via `bin/run_maid_loop.sh`, and enters **Zero-Thinking Wait** (stops calling tools, sleeping until reactive wakeup with 0 token consumption).
 
 1. **Declarative Routing:** Butler reads `~/.gemini/config/plugins/code-manor/routing.json` (or project override) to fetch `maid.model`, `maid.effort`, `maid.fallback_model` (`"flash_lite"`), `maid.loop_driver` (`"bin/run_maid_loop.sh"`), and `maid.flags`.
-2. **Autonomous Driver Dispatch with Git-Status-Aware Synchronization:**
+2. **Autonomous Driver Dispatch with Git-Status-Aware Synchronization & Zero-Thinking Wait:**
    - Butler passes the ticket assignment prompt to the autonomous multi-turn driver:
      ```bash
      bash ~/.gemini/config/plugins/code-manor/bin/run_maid_loop.sh .memory/scratch/ticket-<id>.txt 10
      ```
+   - **Zero-Thinking Wait Rule:** Once launched, Butler MUST NOT poll or loop on status. Butler stops calling tools immediately to enter a zero-token deep sleep until the system's `reactive wakeup` message signals process completion.
    - **Mode B Fallback:** If `agy` is missing, Butler invokes native `invoke_subagent(Role: "maid", Model: "flash_lite", Workspace: "branch")`.
    - **Sync Protocol:** When Maid finishes its turn and becomes idle/exits, the driver inspects `git status`. If sync is disrupted by code edits, the driver executes `make check` synchronously at OS level. If green, runs the gate command and pushes to GitHub. If tests fail, errors are fed back via `agy --continue` for another turn.
 3. **Strict Boundary:** The maid is strictly an implementer:

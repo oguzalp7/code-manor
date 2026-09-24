@@ -11,10 +11,11 @@ description: Automated takeover protocol for Butler. Reads handoff.md, pins BASE
 
 ## 🔒 Ironclad Operating Contract (Non-Negotiable)
 
-1. **Zero Self-Code:** Butler is an architect, supervisor, and reviewer. Butler MUST NOT call `write_to_file` or `replace_file_content` on `src/` or `tests/`.
+1. **Dual-Lane Dispatch Model & Zero Self-Code:** Butler is primarily an architect, supervisor, and reviewer. Butler MUST NOT modify code in `src/` or `tests/` **EXCEPT under the Fast-Path Threshold ($\le 3$ files, $\le 50$ lines for minor/surgical fixes)**. All multi-file refactors, migrations, and TDD vertical slices (Deep-Path) are strictly delegated to Maid.
 2. **Single-Worker Pool (Anti-Zombie Rule):** Butler maintains **at most ONE active Maid worker session** (`MAID_CONV_ID`) across tickets. Never spawn competing workers!
 3. **Sequential Execution & Declarative Routing:** Feed tickets one-by-one to Maid via `bin/run_maid_loop.sh` using model parameters loaded from `routing.json` (or frugal `flash_lite` in-process fallback).
-4. **Milestone Two-Axis Review:** Conduct `/code-review` only after ALL tickets in the milestone pass local verification (`make check`) and ticket gate (`no-mistakes axi run --skip ci`).
+4. **Zero-Thinking Wait:** When dispatching to Maid, Butler stops calling tools immediately, consuming 0 tokens while waiting for the system's `reactive wakeup`.
+5. **Milestone Two-Axis Review:** Conduct `/code-review` only after ALL tickets in the milestone pass local verification (`make check`) and ticket gate (`no-mistakes axi run --skip ci`).
 
 ---
 
@@ -42,27 +43,42 @@ description: Automated takeover protocol for Butler. Reads handoff.md, pins BASE
    - Extract `policy` (`"yolo"`, `"staged"`, or `"strict"`).
    - Export `MAID_POLICY="$POLICY"` so the driver knows whether to execute or bypass the verification gate.
 
-### Step 2: Maid Worker Execution (`run_maid_loop.sh` Driver Mode with Fallback)
-Butler delegates vertical-slice tickets sequentially using clean CLI subprocesses, or falls back to native subagents if `agy` is not installed:
+### Step 2: Dual-Lane Ticket Dispatch (Fast-Path vs. Deep-Path)
 
-1. **Engine Detection & Graceful Fallback:**
+1. **Scope Evaluation (Lane Selection):**
+   Butler inspects the ticket requirements:
+   - **⚡ Fast-Path ($\le 3$ files, $\le 50$ lines):** If the ticket is a minor/surgical fix (typo, single-column Zod/schema update, minor config or type export):
+     1. Butler performs the edits directly in-context.
+     2. Runs the fast targeted test: `npx vitest run <target_test>`.
+     3. Commits locally: `git commit -m "fix(<ticket-id>): ..."`
+     4. Marks ticket as done: `tasks-axi done <ticket-id>`.
+     5. Proceeds to next ticket immediately without spawning Maid!
+   - **🛡️ Deep-Path ($> 3$ files, Dikey Dilim / TDD):** If the ticket is multi-file, touches architectural seams, or requires TDD, Butler delegates to Maid via the steps below.
+
+2. **Engine Detection & Graceful Fallback (Deep-Path):**
    Butler checks if `agy` exists in PATH (`which agy || which agy.exe || test -f ~/.local/bin/agy || test -f /usr/local/bin/agy`):
    - **Mode A: Autonomous Driver Subprocess Mode (`agy` found - Recommended):**
      Butler writes the ticket assignment prompt to a scratch file (e.g. `.memory/scratch/ticket-<id>.txt`).
 
      > [!IMPORTANT]
-     > **Mandatory Explicit Scope Definition (Anti-Scope-Creep Guardrail):**
-     > To prevent worker wandering, test suite pollution, or existential scope creep, Butler MUST explicitly specify the following boundaries in every ticket prompt file:
+     > **Mandatory Explicit Scope Definition & Outside-In Ladder:**
+     > To prevent worker wandering, test suite pollution, or horizontal collapse, Butler MUST explicitly specify:
      > - **`Target Implementation Files:`** The exact, exhaustive list of source files in `src/` to modify or create.
      > - **`Target Test Files:`** The exact test file(s) in `tests/` that verify this slice.
-     > - **`Strict Boundary Prohibition:`** Explicitly forbid touching, modifying, or diagnosing any other files or unrelated test suites (e.g., *"Strictly do NOT touch, modify, or diagnose unrelated test suites or files outside the listed targets"*).
+     > - **`Strict Boundary Prohibition:`** Explicitly forbid touching or modifying unrelated test suites or files outside the listed targets.
+     > - **`Execution Ladder (Outside-In):`** Enforce the sequential ladder: Step 1 (UI Mock) $\rightarrow$ Step 2 (API Action Mock) $\rightarrow$ Step 3 (DB Migration) $\rightarrow$ Step 4 (DB Integration) $\rightarrow$ Step 5 (Wire-up).
 
-     Butler then executes the autonomous multi-turn driver with the project policy:
+     Butler executes the autonomous multi-turn driver with the project policy:
      ```bash
      export MAID_POLICY="<policy>"
      bash ~/.gemini/config/plugins/code-manor/bin/run_maid_loop.sh .memory/scratch/ticket-<id>.txt 10
      ```
      *(In Windows/WSL environments, run via canonical WSL recipe: `wsl -d Ubuntu-24.04 -e bash -lc "cd <wsl-repo> && export MAID_POLICY=<policy> && bash ~/.gemini/config/plugins/code-manor/bin/run_maid_loop.sh ..."`).*
+
+     > [!TIP]
+     > **Zero-Thinking Wait Invariant (0 Token Sleep):**  
+     > Once the driver command is launched, Butler MUST NOT poll or loop on task status. Butler stops calling tools immediately to enter a zero-token deep sleep. Antigravity will automatically wake Butler up via reactive wakeup when the subprocess exits.
+
    - **Mode B: In-Process Fallback Mode (`agy` missing):**
      Butler falls back to native `invoke_subagent` using **`Model: "flash_lite"`** (NOT `"flash"` or `"pro"`, to avoid thinking quota depletion) and `Workspace: "branch"`.
      *Note:* Antigravity's `invoke_subagent` tool does not support an `Effort` parameter in its schema; `flash_lite` is the strictly compliant, frugal in-process model. Fallback subagents must be killed immediately via `manage_subagents(Action: "kill")` upon ticket completion.

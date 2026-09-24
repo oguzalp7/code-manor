@@ -35,14 +35,16 @@ Code-Manor organizes agentic software delivery as a strict British household hie
 
 ### 🔒 Core Invariants (Non-Negotiable)
 
-1. **Butler Zero-Self-Code Boundary:** Butler is exclusively an architect, conductor, and reviewer. Butler MUST NOT modify files in `src/` or `tests/`. Writing scope is restricted to `.memory/**`, `specs/**`, `.tasks.toml`, `CONTEXT.md`, and `handoff.md`.
+1. **Butler Zero-Self-Code Boundary (Dual-Lane Model):** Butler is primarily an architect, conductor, and reviewer. Butler's default writing scope is restricted to `.memory/**`, `specs/**`, `.tasks.toml`, `CONTEXT.md`, and `handoff.md`.
+   - *Fast-Path Threshold Exception:* For minor, surgical tasks touching $\le 3$ files and $\le 50$ lines (e.g. trivial typo fixes, single-column schema/Zod adjustments, minor config or type exports), Butler is authorized to edit directly in-context, run the fast targeted test (`npx vitest run <target>`), commit, and close the ticket without spinning up Maid.
+   - *Deep-Path Delegation:* Multi-file refactoring, multi-step TDD, or architectural seams must be delegated to Maid via `bin/run_maid_loop.sh`.
 2. **Maid Anti-Tampering & Anti-Fake-Testing Rule:** Modifying assertion lines or deleting existing tests in `tests/` to force green is strictly forbidden. Furthermore, writing fake tests that inspect source code via `fs.readFileSync`, `readFile`, or regex/string matching is strictly forbidden. Tests must assert against runtime function I/O, component rendering, or user behavior.
 3. **No Dangling Background Daemons:** Maid is executed strictly as a synchronous run-to-completion CLI subprocess (`agy -p`). Zero dangling subagent daemons or orphaned background workers are permitted in RAM.
 4. **Single Worker Session per Batch:** Butler reuses at most ONE warm worker session (`$MAID_CONV_ID`) per milestone batch, subject to the 3-Tier Traffic Light Context Gauge.
 
 ---
 
-## 🌉 2. Upstream-to-Downstream Protocol Bridge
+## 🌉 2. Upstream-to-Downstream Protocol Bridge & Execution Ladders
 
 Ambiguous ideas never enter the vertical execution task graph directly. Code-Manor strictly bifurcates cognitive fog from executable slices.
 
@@ -51,9 +53,16 @@ Ambiguous ideas never enter the vertical execution task graph directly. Code-Man
                                                               │
                                                      /steward-dispatch
                                                               │
-                                                        handoff.md
+                                                         handoff.md
                                                               │
                                                      /butler-takeover
+                                                              │
+                                     ┌────────────────────────┴────────────────────────┐
+                                     ▼                                                 ▼
+                          ⚡ Fast-Path (In-Context)                          🛡️ Deep-Path (Maid)
+                          • <= 3 files, minor fix                           • > 3 files, full TDD
+                          • vitest run <target>                             • 5-Stage Outside-In Ladder
+                          • Zero Maid Subprocess                            • Zero-Thinking Wait
 ```
 
 ### Operating Recipe:
@@ -62,7 +71,20 @@ Ambiguous ideas never enter the vertical execution task graph directly. Code-Man
 3. **Specification & Slicing:** Settled frontiers synthesize into `specs/<slug>.md` (with numbered `[AC-xx]` criteria) and slice into atomic vertical tickets via `/to-tickets`.
 4. **Autonomous Dispatch (`/steward-dispatch` $\rightarrow$ `/butler-takeover`):**
    - Steward runs `/steward-dispatch` to compact the frontier milestone into `handoff.md`.
-   - Butler triggers `/butler-takeover` to ingest `handoff.md`, pin `$BASE_SHA`, and begin execution without human errand-boy overhead.
+   - Butler triggers `/butler-takeover` to ingest `handoff.md`, evaluate scope (Fast-Path vs. Deep-Path), pin `$BASE_SHA`, and begin execution without human errand-boy overhead.
+
+### 🪜 5-Stage Outside-In Execution Ladder (Maid's Slicing Protocol):
+To prevent low-effort worker models from horizontal collapse (touching UI, API, and DB simultaneously and breaking syntax across 6 files), Butler structures full-stack vertical slices into an explicit, top-down ladder:
+1. **Step 1 [Frontend UI Layer]:** Create UI component with mock props/state + unit test. Verify loading, empty, and error render states.
+2. **Step 2 [API / Server Action Layer]:** Create route handler / server action with mock database + unit test. Validate Zod request/response DTO schemas.
+3. **Step 3 [DB Layer / Migration]:** Declare minimal schema changes and migration strictly required by Step 2.
+4. **Step 4 [DB Integration]:** Run targeted integration test against local test database.
+5. **Step 5 [Frontend Wire-up]:** Connect UI component to live Server Action / API and run wire-up integration test.
+
+### 🔌 In-Memory Seam First Rule for 3rd-Party Infrastructure:
+When a tracer bullet involves external or asynchronous services (Job Queues like BullMQ, Redis caching, Vector DBs, Schedulers):
+- **Tracer Bullet Phase (Hermetic In-Memory Seam):** Maid **NEVER** connects live Docker/Redis/network daemons during the initial vertical slice. Butler requires defining a clean interface (Seam) and an `InMemory...` stub (e.g. `InMemoryJobQueue`). The entire slice executes end-to-end in $< 50\text{ ms}$, ensuring Tier 1 `make check` remains 100% hermetic.
+- **Adapter Phase (Isolated Ticket):** The live infrastructure adapter (`BullMQJobQueue`, `RedisCache`) is implemented in a separate, follow-up ticket and tested exclusively in `test:integration`.
 
 ---
 

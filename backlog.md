@@ -3,6 +3,7 @@
 ## In flight
 ## Queued
 ## Done
+- [x] butler-dual-path-threshold - Formalize Butler Dual-Path Threshold Exception for Trivial Edits (kind: task) (done 2026-09-24)
 - [x] feat-agent-telemetry-dashboard - Python Streamlit & Live Telemetry Dashboard for CLI Agents (done 2026-09-24)
 - [x] butler-takeover-policy-export - Butler Takeover Protokolunun MAID_POLICY Aktarimi ve exit 2 Eskalasyon Yonetimi (done 2026-09-23)
 - [x] driver-maid-policy-support - Surucuye MAID_POLICY Destegi ve yolo Modunda Kapi Atlama (done 2026-09-23)
