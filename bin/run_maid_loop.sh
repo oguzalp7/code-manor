@@ -31,6 +31,12 @@ FLAGS="${MAID_FLAGS:---dangerously-skip-permissions}"
 GATE_COMMAND="${MAID_GATE_COMMAND:-no-mistakes axi run --skip ci}"
 POLICY="${MAID_POLICY:-staged}"
 
+# Set up dual logging to .memory/scratch/active_maid_loop.log
+LOG_DIR=".memory/scratch"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/active_maid_loop.log"
+exec > >(tee "$LOG_FILE") 2>&1
+
 # Extract Ticket ID and Intent from prompt file
 TICKET_ID=$(grep -E '(Task ID:|Task Assignment:)' "$PROMPT_FILE" 2>/dev/null | head -n 1 | sed -E 's/.*(Task ID:|Task Assignment:)[[:space:]]*//' | tr -d '\r' | xargs || true)
 if [ -z "$TICKET_ID" ]; then
@@ -52,10 +58,11 @@ fi
 # Extract Targeted Test from prompt file if declared (e.g. 'Target Test Files:' or 'Target Test:')
 RAW_TARGET_TEST=$(grep -E 'Target Test( Files)?:' "$PROMPT_FILE" 2>/dev/null | head -n 1 | sed -E 's/.*Target Test( Files)?:[[:space:]]*//' | tr -d '\r' | xargs || true)
 if [ -n "$RAW_TARGET_TEST" ]; then
-  if [[ "$RAW_TARGET_TEST" == npx* ]] || [[ "$RAW_TARGET_TEST" == npm* ]] || [[ "$RAW_TARGET_TEST" == make* ]] || [[ "$RAW_TARGET_TEST" == pnpm* ]]; then
-    TARGET_TEST_CMD="$RAW_TARGET_TEST"
-  else
+  # If it is a single JS/TS test file path without commands, wrap with vitest
+  if [[ "$RAW_TARGET_TEST" =~ \.(ts|tsx|js|jsx)$ ]] && [[ "$RAW_TARGET_TEST" != *" "* ]]; then
     TARGET_TEST_CMD="npx vitest run $RAW_TARGET_TEST"
+  else
+    TARGET_TEST_CMD="$RAW_TARGET_TEST"
   fi
 else
   TARGET_TEST_CMD=""

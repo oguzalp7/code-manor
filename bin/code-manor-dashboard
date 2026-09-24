@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+cd "$(dirname "$0")/.."
+uv tool run streamlit run tools/dashboard/app.py "$@"
