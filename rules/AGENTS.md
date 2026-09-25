@@ -55,16 +55,20 @@
    - **Tier 1: Mandatory Hermetic Local Gate (`make check` — Git-Status-Aware Sync Protocol):**
      - **Pre-Flight Integrity:** If the git working tree is clean and synchronized with origin (`git status --porcelain` empty), redundant up-front `make check` runs are skipped. If dirty prior to dispatch, `make check` must verify baseline integrity before work begins.
      - **Idle/Exit Sync Trigger:** When Maid finishes a turn and becomes idle/exits, the driver checks `git status`. If git synchronization has been disrupted by code edits (`tests/` and `src/`), `make check` MUST run synchronously at the OS level (hermetic: lint + typecheck + in-memory unit tests; zero external DB/network).
-     - **Pass & Push:** If `make check` exits 0, the driver runs the ticket gate command (`no-mistakes axi run --skip ci`), commits, and pushes verified changes to GitHub (`git push`).
+     - **Pass & Push:** If `make check` exits 0, the driver runs the ticket gate command (`no-mistakes axi run --skip ci --intent "<canonical-intent>"`), commits, and pushes verified changes to GitHub (`git push`).
      - **Fail & Iterate:** If `make check` fails, the failure trace is fed back to Maid via `agy --continue` to fix in the next turn without deleting assertions.
      - Never push code that breaks local linting or static typing.
    - **Tier 2: Policy-Gated Outer & CI Verification:**
      - Each repository declares a `policy` in `projects.json` (`yolo`, `staged`, or `strict`):
        - **`yolo` (Prototypes / Toy Repos):** `make check` passes cleanly. Skips heavy `no-mistakes` and two-axis review; commits/merges immediately for high iteration throughput.
-       - **`staged` (Default / Staged Repositories):** `make check` passes + `no-mistakes axi run --skip ci` exits 0 for rapid ticket iterations. Auto-merges without human review unless risk assessment is High.
+       - **`staged` (Default / Staged Repositories):** `make check` passes + `no-mistakes axi run --skip ci --intent "<canonical-intent>"` exits 0 for rapid ticket iterations. Auto-merges without human review unless risk assessment is High.
        - **`strict` (Production / High-Stakes Repositories):**
-         - *Ticket Phase:* Worker passes `make check` + `no-mistakes axi run --skip ci`.
-         - *PR / Milestone Phase:* Butler verifies full remote CI (`gh pr checks --watch` or `no-mistakes axi run`) + conducts independent two-axis `/code-review` (Spec + Standards against `$BASE_SHA`) + Human signoff required before merge.
+         - *Ticket Phase:* Worker passes `make check` + `no-mistakes axi run --skip ci --intent "<canonical-intent>"`.
+         - *PR / Milestone Phase:* Butler verifies full remote CI (`gh pr checks --watch` or `no-mistakes axi run --intent "..."`) + conducts independent two-axis `/code-review` (Spec + Standards against `$BASE_SHA`) + Human signoff required before merge.
+   - **Mandatory `--intent` Protocol (Kun Chen Intent Conformance):**
+     - `no-mistakes axi run` strictly requires `--intent` to start a run, establishing authoritative acceptance criteria (`Source: agent`).
+     - Canonical template: `[<task-id>]: <title>. Covers: [<AC-xx>]. REQUIRED: <invariants & deliverables>. FORBIDDEN: <anti-patterns, tampering, fake tests>.`
+     - Prevents review auto-fixers from silently deleting required features or introducing unrequested scope.
 
 5. **TRACEABILITY & CONTEXT POINTERS (Epic ➔ Frontier ➔ Spec ➔ Ticket):**
    - **Specs:** Every spec document in `specs/` MUST declare `frontier_ref: FNT-xxx` in its frontmatter and list numbered Acceptance Criteria (`[AC-01]`, `[AC-02]`, etc.).

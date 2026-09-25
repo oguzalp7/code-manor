@@ -15,7 +15,7 @@ description: Automated takeover protocol for Butler. Reads handoff.md, pins BASE
 2. **Single-Worker Pool (Anti-Zombie Rule):** Butler maintains **at most ONE active Maid worker session** (`MAID_CONV_ID`) across tickets. Never spawn competing workers!
 3. **Sequential Execution & Declarative Routing:** Feed tickets one-by-one to Maid via `bin/run_maid_loop.sh` using model parameters loaded from `routing.json` (or frugal `flash_lite` in-process fallback).
 4. **Zero-Thinking Wait:** When dispatching to Maid, Butler stops calling tools immediately, consuming 0 tokens while waiting for the system's `reactive wakeup`.
-5. **Milestone Two-Axis Review:** Conduct `/code-review` only after ALL tickets in the milestone pass local verification (`make check`) and ticket gate (`no-mistakes axi run --skip ci`).
+5. **Milestone Two-Axis Review:** Conduct `/code-review` only after ALL tickets in the milestone pass local verification (`make check`) and ticket gate (`no-mistakes axi run --skip ci --intent "<canonical-intent>"`).
 
 ---
 
@@ -61,8 +61,9 @@ description: Automated takeover protocol for Butler. Reads handoff.md, pins BASE
      Butler writes the ticket assignment prompt to a scratch file (e.g. `.memory/scratch/ticket-<id>.txt`).
 
      > [!IMPORTANT]
-     > **Mandatory Explicit Scope Definition & Outside-In Ladder:**
+     > **Mandatory Explicit Scope Definition, Outside-In Ladder & Kun Chen Intent Protocol:**
      > To prevent worker wandering, test suite pollution, or horizontal collapse, Butler MUST explicitly specify:
+     > - **`Intent:`** Synthesized canonical intent string: `[<task-id>]: <title>. Covers: [<AC-xx>]. REQUIRED: ... FORBIDDEN: ...`
      > - **`Target Implementation Files:`** The exact, exhaustive list of source files in `src/` to modify or create.
      > - **`Target Test Files:`** The exact test file(s) in `tests/` that verify this slice.
      > - **`Strict Boundary Prohibition:`** Explicitly forbid touching or modifying unrelated test suites or files outside the listed targets.
@@ -123,7 +124,7 @@ When all tickets for the frontier milestone are complete:
    - **Standards Axis:** Clean architecture, no leaked abstractions, full typing.
 2. If review findings require fixes: Dispatch a targeted patch prompt to `$MAID_CONV_ID` via `agy -p`.
 3. When clean:
-   - Run outer gate: `no-mistakes axi run` and verify exit code 0.
+   - Run outer gate: `no-mistakes axi run --intent "[<frontier-id>]: <frontier-title>. Covers milestone tickets. REQUIRED: complete verified delivery of all milestone criteria. FORBIDDEN: fake tests, test tampering."` and verify exit code 0.
    - Retire the milestone worker session cleanly.
    - Record lessons learned in `.memory/LESSONS.md`.
    - Create PR:

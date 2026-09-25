@@ -43,11 +43,17 @@ if [ -z "$TICKET_ID" ]; then
   TICKET_ID=$(basename "$PROMPT_FILE" .txt)
 fi
 
-OBJECTIVE=$(grep -A 2 -E '^## Objective' "$PROMPT_FILE" 2>/dev/null | tail -n +2 | head -n 1 | tr -d '\r"' | xargs || true)
-if [ -n "$OBJECTIVE" ]; then
-  INTENT="Implement $TICKET_ID: $(echo "$OBJECTIVE" | cut -c 1-100)"
+# Extract explicit Intent line if declared by Butler (e.g. 'Intent: [agent-90]: ...')
+EXPLICIT_INTENT=$(grep -E '^Intent:' "$PROMPT_FILE" 2>/dev/null | head -n 1 | sed -E 's/^Intent:[[:space:]]*//' | tr -d '\r"' | xargs || true)
+if [ -n "$EXPLICIT_INTENT" ]; then
+  INTENT="$EXPLICIT_INTENT"
 else
-  INTENT="Implement $TICKET_ID"
+  OBJECTIVE=$(grep -A 2 -E '^## Objective' "$PROMPT_FILE" 2>/dev/null | tail -n +2 | head -n 1 | tr -d '\r"' | xargs || true)
+  if [ -n "$OBJECTIVE" ]; then
+    INTENT="Implement $TICKET_ID: $(echo "$OBJECTIVE" | cut -c 1-100)"
+  else
+    INTENT="Implement $TICKET_ID"
+  fi
 fi
 
 # Dynamically inject --intent if gate command invokes no-mistakes and lacks --intent
